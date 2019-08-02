@@ -6,8 +6,8 @@
 
 ## UPIプロトコル?
 
-基本的にはチェスの`UCI`、将棋の`USI`と考えは同じ。  
-将棋で言えばこのプログラムの位置づけは`将棋所`や`ShogiGUI`みたいなものです。(そうなりたい)  
+GUIと思考エンジンが通信を行うためのプロトコルです。
+基本的にはチェスの`UCI`、将棋の`USI`と考えは同じで、将棋で言えばこのプログラムの位置づけは`将棋所`や`ShogiGUI`みたいなものです。(そうなりたい)  
 UPIプロトコルは[UPI.md](https://github.com/TukamotoRyuzo/upi-gui/blob/master/UPI.md)を見てください。
 
 ## ダウンロード
@@ -18,5 +18,4 @@ https://github.com/TukamotoRyuzo/upi-gui/releases
 
 ## スクリーンショット
 
-こんな感じ  
 ![image](https://raw.githubusercontent.com/TukamotoRyuzo/upi-gui/resource/ss1.png "サンプル")
