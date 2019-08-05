@@ -3,14 +3,14 @@
 #include <iostream>
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdLine, int cmdShow) {
-	Log::start();    
-	MainWindow main_window(hInst);
+    Log::start();    
+    MainWindow main_window(hInst);
 
-	if (!main_window.init()) {
-		return -1;
-	}
+    if (!main_window.init()) {
+        return -1;
+    }
 
-	main_window.doMessageLoop();
-	Log::end();
+    main_window.doMessageLoop();
+    Log::end();
     return 0;
 }

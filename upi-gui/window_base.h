@@ -9,78 +9,78 @@
 #pragma comment(lib,"winmm.lib")
 
 enum EventID {
-	B_START, B_STOP, B_RESTART,
-	B_ADD_ENGINE, B_DELETE_ENGINE,
-	B_SEND_MESSAGE_TO_ENGINE1, B_SEND_MESSAGE_TO_ENGINE2, B_DELETE_LOG,
-	EDIT_DEBUG_LOG, EDIT_SEND_COMMAND,
-	COMBO_AI1P, COMBO_AI2P,
-	CHECK_AI1P, CHECK_AI2P,
-	CHECK_CONTINUE_BATTLE, CHECK_PLAY_SOUND,
-	LIST_ENGINE,
-	MOK_START = 40001,
-	MENU_OPEN_PUYOFU = MOK_START,
-	MENU_SAVE_PUYOFU = 40002,
-	MENU_END = 40003,
-	MENU_FIELD_EDIT = 40004,
-	MENU_BATTLE = 40005,
-	MENU_SERVER_BATTLE = 40006,
-	MENU_ADD_ENGINE = 40007,
-	MENU_DEBUG_LOG = 40008,
-	MENU_VERSION = 40009,
-	DEBUG_WINDOW_DESTROYED,
-	MOK_END,
+    B_START, B_STOP, B_RESTART,
+    B_ADD_ENGINE, B_DELETE_ENGINE,
+    B_SEND_MESSAGE_TO_ENGINE1, B_SEND_MESSAGE_TO_ENGINE2, B_DELETE_LOG,
+    EDIT_DEBUG_LOG, EDIT_SEND_COMMAND,
+    COMBO_AI1P, COMBO_AI2P,
+    CHECK_AI1P, CHECK_AI2P,
+    CHECK_CONTINUE_BATTLE, CHECK_PLAY_SOUND,
+    LIST_ENGINE,
+    MOK_START = 40001,
+    MENU_OPEN_PUYOFU = MOK_START,
+    MENU_SAVE_PUYOFU = 40002,
+    MENU_END = 40003,
+    MENU_FIELD_EDIT = 40004,
+    MENU_BATTLE = 40005,
+    MENU_SERVER_BATTLE = 40006,
+    MENU_ADD_ENGINE = 40007,
+    MENU_DEBUG_LOG = 40008,
+    MENU_VERSION = 40009,
+    DEBUG_WINDOW_DESTROYED,
+    MOK_END,
 };
 
 enum BitmapID {
-	MEMORY,
-	PUYO, FIELD,
-	BITMAP_NB,
+    MEMORY,
+    PUYO, FIELD,
+    BITMAP_NB,
 };
 
 // WindowsAPIはこのクラスでラップして使う。
 class WindowBase {
 public:
-	WindowBase(HINSTANCE hinst, LPSTR class_name);
-	~WindowBase();
-	void doMessageLoop();
-	bool init();		
-	HWND mainWindowHandle() const { return main_window_handle; }
+    WindowBase(HINSTANCE hinst, LPSTR class_name);
+    ~WindowBase();
+    void doMessageLoop();
+    bool init();        
+    HWND mainWindowHandle() const { return main_window_handle; }
 protected:
-	void create(EventID event_id);
-	void close(EventID event_id);
-	void enable(EventID event_id);
-	void disable(EventID event_id);
-	void check(EventID event_id);
-	void uncheck(EventID event_id);
-	bool isChecked(EventID event_id) const;
-	static LRESULT CALLBACK windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	LRESULT proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	virtual bool createWindow() = 0;
-	virtual bool onCreate() = 0;
-	virtual void onDestroy();	
-	virtual void onPaint();
-	virtual void onTimer() {};
-	virtual void setHandler() {};
-	virtual void onMCINotify(WPARAM, LPARAM) {};
-	virtual LRESULT onCtlColorStatic(WPARAM, LPARAM) { return (LRESULT)0; };
-	std::function<void(HWND, UINT, WPARAM, LPARAM)>& commandHandler(EventID event_id);
+    void create(EventID event_id);
+    void close(EventID event_id);
+    void enable(EventID event_id);
+    void disable(EventID event_id);
+    void check(EventID event_id);
+    void uncheck(EventID event_id);
+    bool isChecked(EventID event_id) const;
+    static LRESULT CALLBACK windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+    LRESULT proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+    virtual bool createWindow() = 0;
+    virtual bool onCreate() = 0;
+    virtual void onDestroy();    
+    virtual void onPaint();
+    virtual void onTimer() {};
+    virtual void setHandler() {};
+    virtual void onMCINotify(WPARAM, LPARAM) {};
+    virtual LRESULT onCtlColorStatic(WPARAM, LPARAM) { return (LRESULT)0; };
+    std::function<void(HWND, UINT, WPARAM, LPARAM)>& commandHandler(EventID event_id);
 
-	HINSTANCE instance_handle;
-	HWND main_window_handle;
+    HINSTANCE instance_handle;
+    HWND main_window_handle;
 
-	struct ChildWindow {
-		LPSTR class_name, window_name;
-		DWORD style;
-		int x, y, w, h;
-		HWND handle;
-		std::function<void(HWND, UINT, WPARAM, LPARAM)> command_handler;
-		ChildWindow() {};
-		ChildWindow(LPSTR c, LPSTR w, DWORD s, int x_, int y_, int w_, int h_)
-			: class_name(c), window_name(w), style(s), x(x_), y(y_), w(w_), h(h_) {};
-	};
+    struct ChildWindow {
+        LPSTR class_name, window_name;
+        DWORD style;
+        int x, y, w, h;
+        HWND handle;
+        std::function<void(HWND, UINT, WPARAM, LPARAM)> command_handler;
+        ChildWindow() {};
+        ChildWindow(LPSTR c, LPSTR w, DWORD s, int x_, int y_, int w_, int h_)
+            : class_name(c), window_name(w), style(s), x(x_), y(y_), w(w_), h(h_) {};
+    };
 
-	std::unordered_map<EventID, ChildWindow> child_window;
-	LPSTR class_name;
+    std::unordered_map<EventID, ChildWindow> child_window;
+    LPSTR class_name;
 };
 
 

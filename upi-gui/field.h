@@ -8,12 +8,12 @@ enum Time {
     CHAINTIME  = 60,
     NEXTTIME   = 7,
     SETTIME    = 15,
-	FALLTIME   = 2,
-	AUTODROP_FREQ = 50,
+    FALLTIME   = 2,
+    AUTODROP_FREQ = 50,
 };
 
 enum Color { 
-	EMPTY, WALL, RED, GREEN, BLUE, PURPLE, YELLOW, OBSTACLE
+    EMPTY, WALL, RED, GREEN, BLUE, PURPLE, YELLOW, OBSTACLE
 };
 
 inline Color randomColor(Color except_color = EMPTY) {
@@ -24,7 +24,7 @@ inline Color randomColor(Color except_color = EMPTY) {
 }
 
 inline char colorToString(Color c) {
-	return "  rgbpyo"[c];		
+    return "  rgbpyo"[c];        
 }
 
 class Field;
@@ -53,9 +53,9 @@ enum GameFase {
 };
 
 enum PlayerStatus {
-	NO_PLAYER_FLAG = 0,
-	PLAYER1 = 1 << 0,
-	PLAYER_AI = 1 << 2,
+    NO_PLAYER_FLAG = 0,
+    PLAYER1 = 1 << 0,
+    PLAYER_AI = 1 << 2,
 };
 
 ENABLE_OPERATORS_ON(PlayerStatus);
@@ -64,7 +64,7 @@ class Field {
     // フィールドの横幅、高さ（番兵含める）
     static const int FIELD_WIDTH = 8;
     static const int FIELD_HEIGHT = 16;
-	
+    
     // おじゃま一個分の点数
     static const int RATE = 70;
 
@@ -89,8 +89,8 @@ class Field {
     GameFase fase;
 
     Tumo* tumo_pool;
-	
-	// タイマと、現在のぷよ配列番号
+    
+    // タイマと、現在のぷよ配列番号
     int operation_timer, tumo_number;
 
     Color field[FIELD_WIDTH][FIELD_HEIGHT];
@@ -120,8 +120,8 @@ public:
     // 連鎖後のぷよを落とす
     bool slide();
 
-	// スライドに何フレームかかるかを返す。
-	int slideFrame() const;
+    // スライドに何フレームかかるかを返す。
+    int slideFrame() const;
 
     // ぷよを消すための関数群
     void deletePuyo(int dammy[FIELD_WIDTH][FIELD_HEIGHT], int x, int y);
@@ -147,11 +147,11 @@ public:
     int next(int x, int y, int d) const { return field[x + posi[d][0]][y + posi[d][1]]; }
     int con(int x, int y) const {
         int c = 0;
-		for (int i = 0; i < 4; i++) {
-			if (field[x][y] == next(x, y, i) && y + posi[i][1] < 13) {
-				c |= 1 << i;
-			}
-		}
+        for (int i = 0; i < 4; i++) {
+            if (field[x][y] == next(x, y, i) && y + posi[i][1] < 13) {
+                c |= 1 << i;
+            }
+        }
         return c;
     }
 
@@ -165,39 +165,39 @@ public:
         current = tumo_pool[tumo_number];
     }
 
-	Tumo getTumo() const {
-		return tumo_pool[tumo_number];
-	}
+    Tumo getTumo() const {
+        return tumo_pool[tumo_number];
+    }
 
-	void floorList(int* list) const {
-		for (int i = 0; i < 6; i++) {
-			int y;
-			for (y = 13; y > 0; y--) {
-				if (!isEmpty(i + 1, y)) {
-					break;
-				}
-			}
+    void floorList(int* list) const {
+        for (int i = 0; i < 6; i++) {
+            int y;
+            for (y = 13; y > 0; y--) {
+                if (!isEmpty(i + 1, y)) {
+                    break;
+                }
+            }
 
-			list[i] = y;
-		}
-	}
+            list[i] = y;
+        }
+    }
 
     bool operator == (const Field &f) const {
-		for (int x = 0; x <= 7; x++) {
-			for (int y = 0; y <= 15; y++) {
-				if (field[x][y] != f.field[x][y]) {
-					return false;
-				}
-			}
-		}
+        for (int x = 0; x <= 7; x++) {
+            for (int y = 0; y <= 15; y++) {
+                if (field[x][y] != f.field[x][y]) {
+                    return false;
+                }
+            }
+        }
 
         return true;
     }
 
-	int getChain() const { return chain; }
-	int getScoreSum() const { return scoresum; }
-	GameFase getGamefase() const { return fase; }
-	int getConformedOjama() const { return ojama[0]; }
-	int getUnconformedOjama() const { return ojama[1]; }
-	std::string toPfen() const;
+    int getChain() const { return chain; }
+    int getScoreSum() const { return scoresum; }
+    GameFase getGamefase() const { return fase; }
+    int getConformedOjama() const { return ojama[0]; }
+    int getUnconformedOjama() const { return ojama[1]; }
+    std::string toPfen() const;
 };

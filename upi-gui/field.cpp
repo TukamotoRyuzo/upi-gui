@@ -17,60 +17,60 @@ bool Field::isEmpty(const Tumo &p) const {
 }
 
 bool Field::isEmpty() {
-	for (int x = 1; x <= 6; x++) {
-		for (int y = 1; y <= 13; y++) {
-			if (field[x][y] != EMPTY) {
-				return false;
-			}
-		}
-	}
+    for (int x = 1; x <= 6; x++) {
+        for (int y = 1; y <= 13; y++) {
+            if (field[x][y] != EMPTY) {
+                return false;
+            }
+        }
+    }
 
     return true;
 }
 
 std::string Field::toPfen() const {
-	std::stringstream ss;
+    std::stringstream ss;
 
-	for (int x = 1; x <= 6; x++) {
-		for (int y = 1; y <= 13; y++) {
-			if (!isEmpty(x, y)) {
-				ss << colorToString(color(x, y));
-			}
-			else {
-				break;
-			}
-		}
+    for (int x = 1; x <= 6; x++) {
+        for (int y = 1; y <= 13; y++) {
+            if (!isEmpty(x, y)) {
+                ss << colorToString(color(x, y));
+            }
+            else {
+                break;
+            }
+        }
 
-		ss << "/";
-	}
+        ss << "/";
+    }
 
-	ss << " " << tumo_number;
-	return ss.str();
+    ss << " " << tumo_number;
+    return ss.str();
 }
 
 void Field::init() {
-	this->all_clear = false;
-	this->chain = 0;	
-	this->fase = GameFase::NEXT;
-	this->Dcnt = 0;
-	this->Lcnt = 0;
-	this->Lrocnt = 0;
-	this->Rcnt = 0;
-	this->Rrocnt = 0;
-	this->tumo_number = -1;
-	this->ojama[0] = 0;
-	this->ojama[1] = 0;
-	this->ojamabuf = 0;
-	this->operation_timer = 0;
-	this->score = 0;
-	this->scoresum = 0;
-	this->wait_timer = 0;    
+    this->all_clear = false;
+    this->chain = 0;    
+    this->fase = GameFase::NEXT;
+    this->Dcnt = 0;
+    this->Lcnt = 0;
+    this->Lrocnt = 0;
+    this->Rcnt = 0;
+    this->Rrocnt = 0;
+    this->tumo_number = -1;
+    this->ojama[0] = 0;
+    this->ojama[1] = 0;
+    this->ojamabuf = 0;
+    this->operation_timer = 0;
+    this->score = 0;
+    this->scoresum = 0;
+    this->wait_timer = 0;    
 
-	for (int x = 0; x < FIELD_WIDTH; x++) {
-		for (int y = 0; y < FIELD_HEIGHT; y++) {
-			field[x][y] = (x == 0 || x == 7 || y == 0 || y == 15) ? WALL : EMPTY;
-		}
-	}
+    for (int x = 0; x < FIELD_WIDTH; x++) {
+        for (int y = 0; y < FIELD_HEIGHT; y++) {
+            field[x][y] = (x == 0 || x == 7 || y == 0 || y == 15) ? WALL : EMPTY;
+        }
+    }
 }
 
 // 一定時間ごとに一つ降りてくる処理
@@ -78,9 +78,9 @@ bool Field::drop() {
     // 一つ位置を下へ
     current.y--;
 
-	if (isEmpty(current)) {
-		return true;
-	}
+    if (isEmpty(current)) {
+        return true;
+    }
 
     // もし置けないなら、そこで位置を確定させる
     current.y++;
@@ -92,20 +92,20 @@ bool Field::drop() {
 bool Field::slide() {
     bool ret = false;
 
-	for (int x = 1; x <= 6; x++) {
-		for (int y = 1; y <= 13; y++) {
-			if (isEmpty(x, y)) {
-				while (++y <= 13 + 1) {
-					if (!isEmpty(x, y)) {
-						ret = true;
-					}
+    for (int x = 1; x <= 6; x++) {
+        for (int y = 1; y <= 13; y++) {
+            if (isEmpty(x, y)) {
+                while (++y <= 13 + 1) {
+                    if (!isEmpty(x, y)) {
+                        ret = true;
+                    }
 
-					field[x][y - 1] = field[x][y];
-					field[x][y] = EMPTY;
-				}
-			}
-		}
-	}
+                    field[x][y - 1] = field[x][y];
+                    field[x][y] = EMPTY;
+                }
+            }
+        }
+    }
 
     return ret;
 }
@@ -115,25 +115,25 @@ int Field::slideFrame() const {
     bool ret = false;
     int slider_count[8] = { 0 };
 
-	for (int x = 1; x <= 6; x++) {
-		for (int y = 1; y <= 13; y++) {
-			if (isEmpty(x, y)) {
-				int dy = y;
-				do {
-					++dy;
-				} while (isEmpty(x, dy));
+    for (int x = 1; x <= 6; x++) {
+        for (int y = 1; y <= 13; y++) {
+            if (isEmpty(x, y)) {
+                int dy = y;
+                do {
+                    ++dy;
+                } while (isEmpty(x, dy));
 
-				if (dy > 13) {
-					break;
-				}
+                if (dy > 13) {
+                    break;
+                }
 
-				slider_count[x] += dy - y;
-				y = dy;
-			}
-		}
-	}
+                slider_count[x] += dy - y;
+                y = dy;
+            }
+        }
+    }
 
-	return *std::max_element(slider_count, slider_count + 8);
+    return *std::max_element(slider_count, slider_count + 8);
 }
 
 bool Field::vanish() {
@@ -144,22 +144,22 @@ bool Field::vanish() {
 
     int dammy[FIELD_WIDTH][FIELD_HEIGHT] = { 0 }, delete_count = 0, connect = 0, color_bit = 0, count;
 
-	for (int x = 1; x <= 6; x++) {
-		for (int y = 1; y <= 12; y++) {
-			if (field[x][y] == EMPTY
-				|| field[x][y] == OBSTACLE
-				|| dammy[x][y] == 1) {
-				continue;
-			}
+    for (int x = 1; x <= 6; x++) {
+        for (int y = 1; y <= 12; y++) {
+            if (field[x][y] == EMPTY
+                || field[x][y] == OBSTACLE
+                || dammy[x][y] == 1) {
+                continue;
+            }
 
-			else if ((count = countConnection(dammy, x, y)) >= 4) {
-				delete_count += count;
-				connect += connect_b[count % 8];
-				color_bit |= 1 << color(x, y);
-				deletePuyo(dammy, x, y);
-			}
-		}
-	}
+            else if ((count = countConnection(dammy, x, y)) >= 4) {
+                delete_count += count;
+                connect += connect_b[count % 8];
+                color_bit |= 1 << color(x, y);
+                deletePuyo(dammy, x, y);
+            }
+        }
+    }
 
     if (delete_count >= 4) {
         int b = chain_b[chain] + connect + color_b[popCount(color_bit) - 1];
@@ -175,9 +175,9 @@ bool Field::vanish() {
         chain++;
     }
 
-	else {
-		chain = 0;
-	}
+    else {
+        chain = 0;
+    }
 
     return delete_count >= 4;
 }
@@ -190,9 +190,9 @@ int Field::countConnection(int dammy[FIELD_WIDTH][FIELD_HEIGHT], int x, int y) c
     for (int bp = con(x, y); bp; bp &= bp - 1) {
         int r = bsf64(bp);
 
-		if (dammy[x + posi[r][0]][y + posi[r][1]] != 1) {
-			count += countConnection(dammy, x + posi[r][0], y + posi[r][1]);
-		}
+        if (dammy[x + posi[r][0]][y + posi[r][1]] != 1) {
+            count += countConnection(dammy, x + posi[r][0], y + posi[r][1]);
+        }
     }
 
     return count;
@@ -203,19 +203,19 @@ void Field::deletePuyo(int dammy[FIELD_WIDTH][FIELD_HEIGHT], int x, int y) {
 
     for (int bp = con(x, y); bp; bp &= bp - 1) {
         int r = bsf64(bp);
-		if (dammy[x + posi[r][0]][y + posi[r][1]] != 2) {
-			deletePuyo(dammy, x + posi[r][0], y + posi[r][1]);
-		}
+        if (dammy[x + posi[r][0]][y + posi[r][1]] != 2) {
+            deletePuyo(dammy, x + posi[r][0], y + posi[r][1]);
+        }
     }
 
     field[x][y] = EMPTY;
 
     // おじゃまが回りにあったら、一緒に消す
-	for (int r = 0; r < 4; r++) {
-		if (field[x + posi[r][0]][y + posi[r][1]] == OBSTACLE) {
-			field[x + posi[r][0]][y + posi[r][1]] = EMPTY;
-		}
-	}
+    for (int r = 0; r < 4; r++) {
+        if (field[x + posi[r][0]][y + posi[r][1]] == OBSTACLE) {
+            field[x + posi[r][0]][y + posi[r][1]] = EMPTY;
+        }
+    }
 }
 
 // 14段目にお邪魔を並べる。その後はslideを呼べば良い。
@@ -229,9 +229,9 @@ void Field::putOjama() {
         int max = std::min(ojamabuf, 6);
         ojamabuf -= max;
 
-		for (int x = 0; x < max; x++) {
-			field[v[x]][14] = OBSTACLE;
-		}
+        for (int x = 0; x < max; x++) {
+            field[v[x]][14] = OBSTACLE;
+        }
     }
 }
 
@@ -245,12 +245,12 @@ bool Field::operateTumo(OperationBit key_operation) {
         if (Lcnt == 0 || Lcnt > 5 && Lcnt % 2 == 0) {
             n.x--;
 
-			if (isEmpty(n)) {
-				current = n;
-			}
-			else {
-				n.x++;
-			}
+            if (isEmpty(n)) {
+                current = n;
+            }
+            else {
+                n.x++;
+            }
         }
 
         Lcnt++;
@@ -261,21 +261,21 @@ bool Field::operateTumo(OperationBit key_operation) {
         if (Rcnt == 0 || Rcnt > 5 && Rcnt % 2 == 0) {
             n.x++;
 
-			if (isEmpty(n)) {
-				current = n;
-			}
-			else {
-				n.x--;
-			}
+            if (isEmpty(n)) {
+                current = n;
+            }
+            else {
+                n.x--;
+            }
         }
 
         Rcnt++;
         Lcnt = 0;
     }
 
-	else if (Rrocnt < 5 && Lrocnt < 5) {
-		Rcnt = Lcnt = 0;
-	}
+    else if (Rrocnt < 5 && Lrocnt < 5) {
+        Rcnt = Lcnt = 0;
+    }
 
     if (key_operation & OPE_R_ROTATE) {
         if (Rrocnt == 0 || (Rrocnt > 999999 && Rcnt == 0 && Lcnt == 0 && Dcnt == 0)) {
@@ -305,9 +305,9 @@ bool Field::operateTumo(OperationBit key_operation) {
                             n.y++;
 
                             // ここまできて置けなかったら、15段目の壁にぶつかっているので操作しない
-							if (!isEmpty(n)) {
-								b = false;
-							}
+                            if (!isEmpty(n)) {
+                                b = false;
+                            }
                         }
                     }
                 }
@@ -316,15 +316,15 @@ bool Field::operateTumo(OperationBit key_operation) {
                 else {
                     n.y++;
 
-					if (!isEmpty(n)) {
-						b = false;
-					}
+                    if (!isEmpty(n)) {
+                        b = false;
+                    }
                 }
             }
 
-			if (b) {
-				current = n;
-			}
+            if (b) {
+                current = n;
+            }
         }
 
         Rrocnt++;
@@ -358,9 +358,9 @@ bool Field::operateTumo(OperationBit key_operation) {
                             n.y++;
 
                             // ここまできて置けなかったら、15段目の壁にぶつかっているので操作しない
-							if (!isEmpty(n)) {
-								b = false;
-							}
+                            if (!isEmpty(n)) {
+                                b = false;
+                            }
                         }
                     }
                 }
@@ -369,23 +369,23 @@ bool Field::operateTumo(OperationBit key_operation) {
                     n.y++;
 
                     // ここまできて置けなかったら、15段目の壁にぶつかっているので操作しない
-					if (!isEmpty(n)) {
-						b = false;
-					}
+                    if (!isEmpty(n)) {
+                        b = false;
+                    }
                 }
             }
 
-			if (b) {
-				current = n;
-			}
+            if (b) {
+                current = n;
+            }
         }
 
         Lrocnt++;
     }
 
-	else {
-		Rrocnt = Lrocnt = 0;
-	}
+    else {
+        Rrocnt = Lrocnt = 0;
+    }
 
     bool down = false;
 
@@ -396,9 +396,9 @@ bool Field::operateTumo(OperationBit key_operation) {
         }
     }
 
-	else if (Rrocnt < 5 && Lrocnt < 5) {
-		Dcnt = 0;
-	}
+    else if (Rrocnt < 5 && Lrocnt < 5) {
+        Dcnt = 0;
+    }
 
     return down;
 }
@@ -408,7 +408,7 @@ void Field::update(Field& enemy, OperationBit key_operation) {
     // 硬直時間がある場合は何もしない
     if (wait_timer) {
         wait_timer--;
-		return;
+        return;
     }
 
     switch (fase) {
@@ -432,22 +432,22 @@ void Field::update(Field& enemy, OperationBit key_operation) {
         // 自由落下
         if (operation_timer++ % AUTODROP_FREQ == 0 && !drop()) {
             fase = CHECK_SLIDE;
-			Rrocnt = Lrocnt = Dcnt = Rcnt = Lcnt = 0;
+            Rrocnt = Lrocnt = Dcnt = Rcnt = Lcnt = 0;
             wait_timer = !Field(*this).slide() ? 0 : SETTIME;
         }
 
         break;
 
     case CHECK_SLIDE:
-		if (slide()) {
-			wait_timer = 1;
-		}
-		else {
-			wait_timer = SETTIME;
-			fase = CHECK_VANISH;
-		}
+        if (slide()) {
+            wait_timer = 1;
+        }
+        else {
+            wait_timer = SETTIME;
+            fase = CHECK_VANISH;
+        }
 
-		break;
+        break;
 
         // ツモ設置完了状態。連鎖やフィールドのスライドを行う。
     case CHECK_VANISH:
@@ -472,9 +472,9 @@ void Field::update(Field& enemy, OperationBit key_operation) {
 
         else {
             // 全消し
-			if (isEmpty()) {
-				all_clear = true;
-			}
+            if (isEmpty()) {
+                all_clear = true;
+            }
 
             // 連鎖が終わったので、相手の振らないお邪魔バッファを振るお邪魔バッファに移し替える。
             if (enemy.ojama[1]) {
@@ -488,11 +488,11 @@ void Field::update(Field& enemy, OperationBit key_operation) {
         break;
 
     case CHAIN_VOICE: {
-		int slide_frame = slideFrame();
-		fase = CHECK_SLIDE;
-		wait_timer = (chain == 1 && slide_frame == 0) ? 0 : CHAINTIME - slide_frame * 2;
-		break;
-	}
+        int slide_frame = slideFrame();
+        fase = CHECK_SLIDE;
+        wait_timer = (chain == 1 && slide_frame == 0) ? 0 : CHAINTIME - slide_frame * 2;
+        break;
+    }
     case OJAMA_WAIT:
         // 30個以上たまっている場合は30個降る。
         ojamabuf += std::min(30, ojama[0]);
@@ -506,15 +506,15 @@ void Field::update(Field& enemy, OperationBit key_operation) {
 
         if (!slide()) {
             // 連鎖が終わっても、[3][12]にぷよがある
-			if (isDeath()) {
-				fase = GAMEOVER;
-			}
+            if (isDeath()) {
+                fase = GAMEOVER;
+            }
 
             else {
                 // 14だんめのぷよを消去する
-				for (int x = 1; x <= 6; x++) {
-					field[x][14] = EMPTY;
-				}
+                for (int x = 1; x <= 6; x++) {
+                    field[x][14] = EMPTY;
+                }
 
                 fase = NEXT;
             }
@@ -532,9 +532,9 @@ int Field::convertSimulatorFormat(int score) {
     // 面白そうな連鎖ならぷよシミュレータで読み込める形のURLを生成する
     FILE *fp;
     errno_t error;
-	if ((error = fopen_s(&fp, "rensa.txt", "a+")) != 0) {
-		return 0;
-	}
+    if ((error = fopen_s(&fp, "rensa.txt", "a+")) != 0) {
+        return 0;
+    }
 
     fprintf(fp, "http://www.puyop.com/s/");
 
@@ -553,28 +553,28 @@ int Field::convertSimulatorFormat(int score) {
     bool b = false;
 
     // 左上から順番に
-	for (int y = 13; y >= 1; y--) {
-		for (int x = 1; x <= 6; x++) {
-			if (isEmpty(x, y) && !b) {
-				continue;
-			}
+    for (int y = 13; y >= 1; y--) {
+        for (int x = 1; x <= 6; x++) {
+            if (isEmpty(x, y) && !b) {
+                continue;
+            }
 
-			b = true;
+            b = true;
 
-			if (x % 2) {
-				colBit = 0;
-				colBit |= conv_col[color(x, y)] << 3;
-			}
+            if (x % 2) {
+                colBit = 0;
+                colBit |= conv_col[color(x, y)] << 3;
+            }
 
-			else {
-				colBit |= conv_col[color(x, y)];
-			}
+            else {
+                colBit |= conv_col[color(x, y)];
+            }
 
-			if (x % 2 == 0) {
-				buf[cnt++] = sin[colBit];
-			}
-		}
-	}
+            if (x % 2 == 0) {
+                buf[cnt++] = sin[colBit];
+            }
+        }
+    }
 
     buf[cnt] = '\0';
     fprintf(fp, "%s", buf);
@@ -596,143 +596,143 @@ DWORD dwRop  // ラスタオペレーションコード
 );*/
 
 void Field::show(MainWindow* main_window, PlayerStatus status) {
-	if (wait_timer) {
-		return;
-	}
-	// つながり方によるぷよの表示の切り替え配列
-	// 0000 0
-	// 0001 上 2
-	// 0010 右 3
-	// 0011 上右 6 
-	// 0100 下 4
-	// 0101 上下 7 
-	// 0110 右下 9 
-	// 0111 上右下 14 
-	// 1000 左 5 
-	// 1001 左上 8
-	// 1010 左右 10 
-	// 1011 左右上 12 
-	// 1100 左下 11 
-	// 1101 左下上 15 
-	// 1110 左下右 13 
-	// 1111 左下右上 16
+    if (wait_timer) {
+        return;
+    }
+    // つながり方によるぷよの表示の切り替え配列
+    // 0000 0
+    // 0001 上 2
+    // 0010 右 3
+    // 0011 上右 6 
+    // 0100 下 4
+    // 0101 上下 7 
+    // 0110 右下 9 
+    // 0111 上右下 14 
+    // 1000 左 5 
+    // 1001 左上 8
+    // 1010 左右 10 
+    // 1011 左右上 12 
+    // 1100 左下 11 
+    // 1101 左下上 15 
+    // 1110 左下右 13 
+    // 1111 左下右上 16
 
-	static const int con_color[16] = { 0, 2, 3, 6, 4, 7, 9, 14, 5, 8, 10, 12, 11, 15, 13, 16 };
-	Tumo next1 = tumo_pool[(tumo_number + 1) & 127];
-	Tumo next2 = tumo_pool[(tumo_number + 2) & 127];
-	const bool is1p = status & PLAYER1;
-	const int PN_N1_BEGINX = is1p ? P1_N_BEGINX : P2_N_BEGINX;
-	const int PN_N1_BEGINY = is1p ? P1_N_BEGINY : P2_N_BEGINY;
-	const int PN_N2_BEGINX = is1p ? P1_NN_BEGINX : P2_NN_BEGINX;
-	const int PN_N2_BEGINY = is1p ? P1_NN_BEGINY : P2_NN_BEGINY;
-	const int PN_F_BEGINX = is1p ? P1_F_BEGINX : P2_F_BEGINX;
-	const int PN_F_BEGINY = is1p ? P1_F_BEGINY : P2_F_BEGINY;
+    static const int con_color[16] = { 0, 2, 3, 6, 4, 7, 9, 14, 5, 8, 10, 12, 11, 15, 13, 16 };
+    Tumo next1 = tumo_pool[(tumo_number + 1) & 127];
+    Tumo next2 = tumo_pool[(tumo_number + 2) & 127];
+    const bool is1p = status & PLAYER1;
+    const int PN_N1_BEGINX = is1p ? P1_N_BEGINX : P2_N_BEGINX;
+    const int PN_N1_BEGINY = is1p ? P1_N_BEGINY : P2_N_BEGINY;
+    const int PN_N2_BEGINX = is1p ? P1_NN_BEGINX : P2_NN_BEGINX;
+    const int PN_N2_BEGINY = is1p ? P1_NN_BEGINY : P2_NN_BEGINY;
+    const int PN_F_BEGINX = is1p ? P1_F_BEGINX : P2_F_BEGINX;
+    const int PN_F_BEGINY = is1p ? P1_F_BEGINY : P2_F_BEGINY;
 
-	for (int i = 0; i < 2; i++) {
-		// NEXTぷよを表示
-		BitBlt(main_window->dcHandle(MEMORY),
-			PN_N1_BEGINX,
-			PN_N1_BEGINY + P_SIZE * (1 - i),// 逆順に表示する
-			P_SIZE,
-			P_SIZE,
-			main_window->dcHandle(PUYO),
-			P_SIZE,
-			next1.color[i] * P_SIZE,
-			SRCCOPY);
+    for (int i = 0; i < 2; i++) {
+        // NEXTぷよを表示
+        BitBlt(main_window->dcHandle(MEMORY),
+            PN_N1_BEGINX,
+            PN_N1_BEGINY + P_SIZE * (1 - i),// 逆順に表示する
+            P_SIZE,
+            P_SIZE,
+            main_window->dcHandle(PUYO),
+            P_SIZE,
+            next1.color[i] * P_SIZE,
+            SRCCOPY);
 
-		// NEXTNEXTぷよを表示
-		BitBlt(main_window->dcHandle(MEMORY),
-			PN_N2_BEGINX,
-			PN_N2_BEGINY + P_SIZE * (1 - i),
-			P_SIZE / 2,
-			P_SIZE,// 半分だけ表示
-			main_window->dcHandle(PUYO),
-			P_SIZE + (is1p ? 0 : (P_SIZE / 2)),
-			next2.color[i] * P_SIZE,
-			SRCCOPY);
-	}
+        // NEXTNEXTぷよを表示
+        BitBlt(main_window->dcHandle(MEMORY),
+            PN_N2_BEGINX,
+            PN_N2_BEGINY + P_SIZE * (1 - i),
+            P_SIZE / 2,
+            P_SIZE,// 半分だけ表示
+            main_window->dcHandle(PUYO),
+            P_SIZE + (is1p ? 0 : (P_SIZE / 2)),
+            next2.color[i] * P_SIZE,
+            SRCCOPY);
+    }
 
-	for (int x = 1; x <= 6; x++) {
-		for (int y = 1; y <= 12; y++) {
-			BitBlt(main_window->dcHandle(MEMORY),
-				PN_F_BEGINX + (x - 1) * P_SIZE,
-				PN_F_BEGINY + (12 - y) * P_SIZE,
-				P_SIZE,
-				P_SIZE,
-				main_window->dcHandle(PUYO),
-				(color(x, y) == OBSTACLE) ? 0 : P_SIZE * con_color[con(x, y)],
-				(color(x, y)) * P_SIZE,
-				SRCCOPY);
-		}
-	}
+    for (int x = 1; x <= 6; x++) {
+        for (int y = 1; y <= 12; y++) {
+            BitBlt(main_window->dcHandle(MEMORY),
+                PN_F_BEGINX + (x - 1) * P_SIZE,
+                PN_F_BEGINY + (12 - y) * P_SIZE,
+                P_SIZE,
+                P_SIZE,
+                main_window->dcHandle(PUYO),
+                (color(x, y) == OBSTACLE) ? 0 : P_SIZE * con_color[con(x, y)],
+                (color(x, y)) * P_SIZE,
+                SRCCOPY);
+        }
+    }
 
-	// currentツモを表示
-	if (fase == OPERATION) {
-		for (int i = 0; i < 2; i++) {
-			int x = i == 0 ? current.x : current.cx();
-			int y = i == 0 ? current.y : current.cy();
+    // currentツモを表示
+    if (fase == OPERATION) {
+        for (int i = 0; i < 2; i++) {
+            int x = i == 0 ? current.x : current.cx();
+            int y = i == 0 ? current.y : current.cy();
 
-			if (y < 13) {
-				BitBlt(main_window->dcHandle(MEMORY),
-					PN_F_BEGINX + (x - 1) * P_SIZE,
-					PN_F_BEGINY + (12 - y) * P_SIZE,
-					P_SIZE,
-					P_SIZE,
-					main_window->dcHandle(PUYO),
-					0,
-					current.color[i] * P_SIZE,
-					SRCCOPY);
-			}
-		}
-	}
+            if (y < 13) {
+                BitBlt(main_window->dcHandle(MEMORY),
+                    PN_F_BEGINX + (x - 1) * P_SIZE,
+                    PN_F_BEGINY + (12 - y) * P_SIZE,
+                    P_SIZE,
+                    P_SIZE,
+                    main_window->dcHandle(PUYO),
+                    0,
+                    current.color[i] * P_SIZE,
+                    SRCCOPY);
+            }
+        }
+    }
 
-	// おじゃまの表示
-	// ちびぷよ = 1
-	// ちびぷよ2 = 2
-	// でかぷよ = 6
-	// 岩 = 30
-	// auaua = 200
-	// 泣いてるやつ = 300
-	// 黒いやつ = 400
-	// 紫 = 500
+    // おじゃまの表示
+    // ちびぷよ = 1
+    // ちびぷよ2 = 2
+    // でかぷよ = 6
+    // 岩 = 30
+    // auaua = 200
+    // 泣いてるやつ = 300
+    // 黒いやつ = 400
+    // 紫 = 500
 
-	RECT rectP1ojama = { 48, 0, 336, 48 };
-	RECT rectP2ojama = { 640, 0, 925, 48 };
-	int ojama_kind[8] = { 1, 2, 6, 30, 200, 300, 400, 500 };
-	int ojama_picture[8] = { 0 };
-	int ojama_w = ojama[0] + ojama[1];
+    RECT rectP1ojama = { 48, 0, 336, 48 };
+    RECT rectP2ojama = { 640, 0, 925, 48 };
+    int ojama_kind[8] = { 1, 2, 6, 30, 200, 300, 400, 500 };
+    int ojama_picture[8] = { 0 };
+    int ojama_w = ojama[0] + ojama[1];
 
-	RECT rect_ojama = is1p ? rectP1ojama : rectP2ojama;
+    RECT rect_ojama = is1p ? rectP1ojama : rectP2ojama;
 
-	if (!ojama) {
-		main_window->rectClear(&rect_ojama);
-	}
+    if (!ojama) {
+        main_window->rectClear(&rect_ojama);
+    }
 
-	for (int i = 7; i >= 0; i--) {
-		ojama_picture[i] = ojama_w / ojama_kind[i];
-		ojama_w %= ojama_kind[i];
-	}
+    for (int i = 7; i >= 0; i--) {
+        ojama_picture[i] = ojama_w / ojama_kind[i];
+        ojama_w %= ojama_kind[i];
+    }
 
-	for (int i = 0; i < 6; i++) {
-		int j;
+    for (int i = 0; i < 6; i++) {
+        int j;
 
-		for (j = 8; j >= 1; j--) {
-			if (ojama_picture[j - 1]) {
-				ojama_picture[j - 1]--;
-				break;
-			}
-		}
+        for (j = 8; j >= 1; j--) {
+            if (ojama_picture[j - 1]) {
+                ojama_picture[j - 1]--;
+                break;
+            }
+        }
 
-		const int dx = is1p ? 48 + P_SIZE * i : 640 + P_SIZE * i;
-		const int sx = 816;
-		BitBlt(main_window->dcHandle(MEMORY), dx, 0, P_SIZE, P_SIZE, main_window->dcHandle(PUYO), sx, P_SIZE * j, SRCCOPY);
-	}
+        const int dx = is1p ? 48 + P_SIZE * i : 640 + P_SIZE * i;
+        const int sx = 816;
+        BitBlt(main_window->dcHandle(MEMORY), dx, 0, P_SIZE, P_SIZE, main_window->dcHandle(PUYO), sx, P_SIZE * j, SRCCOPY);
+    }
 
-	const RECT rect_f1 = { P1_F_BEGINX, P_SIZE, P1_F_BEGINX + P_SIZE * 6, P_SIZE * 13 };
-	const RECT rect_f2 = { P2_F_BEGINX, P_SIZE, P2_F_BEGINX + P_SIZE * 6, P_SIZE * 13 };
-	const RECT rect_n1 = { 370, 50, 485, 232 };
-	const RECT rect_n2 = { 490, 50, 605, 232 };
-	InvalidateRect(main_window->mainWindowHandle(), is1p ? &rect_f1 : &rect_f2, false);
-	InvalidateRect(main_window->mainWindowHandle(), is1p ? &rect_n1 : &rect_n2, false);
-	InvalidateRect(main_window->mainWindowHandle(), &rect_ojama, false);
+    const RECT rect_f1 = { P1_F_BEGINX, P_SIZE, P1_F_BEGINX + P_SIZE * 6, P_SIZE * 13 };
+    const RECT rect_f2 = { P2_F_BEGINX, P_SIZE, P2_F_BEGINX + P_SIZE * 6, P_SIZE * 13 };
+    const RECT rect_n1 = { 370, 50, 485, 232 };
+    const RECT rect_n2 = { 490, 50, 605, 232 };
+    InvalidateRect(main_window->mainWindowHandle(), is1p ? &rect_f1 : &rect_f2, false);
+    InvalidateRect(main_window->mainWindowHandle(), is1p ? &rect_n1 : &rect_n2, false);
+    InvalidateRect(main_window->mainWindowHandle(), &rect_ojama, false);
 }
