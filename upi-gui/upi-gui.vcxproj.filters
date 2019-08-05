@@ -96,10 +96,16 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="UPI.md">
+    <None Include="..\README.md">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="README.md">
+    <None Include="..\UPI.md">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\.gitattributes">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\.gitignore">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
