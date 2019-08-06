@@ -1,18 +1,35 @@
 #pragma once
 
-#define NOMINMAX
-#include <windows.h>
+#include "common.h"
 #include <unordered_map>
 #include <functional>
 #include <MMSystem.h>
+#include <commctrl.h>
 
-#pragma comment(lib,"winmm.lib")
+#pragma comment(lib, "comctl32.lib")
+#pragma comment(lib, "winmm.lib")
 
-enum EventID {
+enum EventID {    
     B_START, B_STOP, B_RESTART,
     B_ADD_ENGINE, B_DELETE_ENGINE,
     B_SEND_MESSAGE_TO_ENGINE1, B_SEND_MESSAGE_TO_ENGINE2, B_DELETE_LOG,
+    STATIC_FALL_FREQ,
+    STATIC_CHAIN_WAIT_FRAME,
+    STATIC_SET_FRAME,
+    STATIC_NEXT_FRAME,
+    STATIC_AUTODROP_FRAME,
+    UPDOWN_FALL_FREQ,
+    UPDOWN_CHAIN_WAIT_FRAME,
+    UPDOWN_SET_FRAME,
+    UPDOWN_NEXT_FRAME,
+    UPDOWN_AUTODROP_FRAME,
     EDIT_DEBUG_LOG, EDIT_SEND_COMMAND,
+    EDIT_FALL_FREQ,
+    EDIT_CHAIN_WAIT_FRAME,
+    EDIT_SET_FRAME,
+    EDIT_NEXT_FRAME,
+    EDIT_AUTODROP_FRAME,
+    B_SAVE_PARAMS, B_RETURN_DEFAULT_VALUE,
     COMBO_AI1P, COMBO_AI2P,
     CHECK_AI1P, CHECK_AI2P,
     CHECK_CONTINUE_BATTLE, CHECK_PLAY_SOUND,
@@ -27,6 +44,7 @@ enum EventID {
     MENU_ADD_ENGINE = 40007,
     MENU_DEBUG_LOG = 40008,
     MENU_VERSION = 40009,
+    MENU_RULE_SETTING = 40010,
     DEBUG_WINDOW_DESTROYED,
     MOK_END,
 };
@@ -47,6 +65,7 @@ public:
     HWND mainWindowHandle() const { return main_window_handle; }
 protected:
     void create(EventID event_id);
+    void createUpDown(EventID event_id, EventID bady, int upper, int lower, int now);
     void close(EventID event_id);
     void enable(EventID event_id);
     void disable(EventID event_id);
@@ -69,18 +88,18 @@ protected:
     HWND main_window_handle;
 
     struct ChildWindow {
-        LPSTR class_name, window_name;
+        LPCSTR class_name, window_name;
         DWORD style;
         int x, y, w, h;
         HWND handle;
         std::function<void(HWND, UINT, WPARAM, LPARAM)> command_handler;
         ChildWindow() {};
-        ChildWindow(LPSTR c, LPSTR w, DWORD s, int x_, int y_, int w_, int h_)
+        ChildWindow(LPCSTR c, LPCSTR w, DWORD s, int x_, int y_, int w_, int h_)
             : class_name(c), window_name(w), style(s), x(x_), y(y_), w(w_), h(h_) {};
     };
 
     std::unordered_map<EventID, ChildWindow> child_window;
-    LPSTR class_name;
+    LPCSTR class_name;
 };
 
 

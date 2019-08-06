@@ -4,6 +4,7 @@
 #include "game.h"
 #include "engine.h"
 #include "degug_window.h"
+#include "rule_setting_window.h"
 
 enum FieldSize {
     // PLAYER1のフィールドの左上のx,y座標

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Rule>
+  <ChainTime>60</ChainTime>
+  <NextTime>7</NextTime>
+  <SetTime>15</SetTime>
+  <FallTime>7</FallTime>
+  <AutoDropTime>50</AutoDropTime>
+</Rule>

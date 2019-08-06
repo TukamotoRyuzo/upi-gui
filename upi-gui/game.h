@@ -17,8 +17,8 @@ class Game {
         OperationQueue operation;
         Move move;
         PipeManager pipe;
-        Player(PlayerStatus ps, Tumo* tumo) 
-            : max_chain(0), win(0), frame(0), field(tumo), status(ps), move(MOVE_NONE)
+        Player(PlayerStatus ps, Tumo* tumo, Rule* rule) 
+            : max_chain(0), win(0), frame(0), field(tumo, rule), status(ps), move(MOVE_NONE)
         {};
         void init() {
             max_chain = 0;
@@ -31,9 +31,11 @@ class Game {
     TimePoint start_time, stop_time;
     UPIManager upi;
     MainWindow* main_window;
+    
 public:
+    Rule rule;
     Player p1, p2;
-    Game(MainWindow* w) : p1(PLAYER1, tumos), p2(NO_PLAYER_FLAG, tumos), main_window(w) {};
+    Game(MainWindow* w) : p1(PLAYER1, tumos, &rule), p2(NO_PLAYER_FLAG, tumos, &rule), main_window(w) {};
     void init();
     void initTumo();
     const Tumo* getTumo() const {

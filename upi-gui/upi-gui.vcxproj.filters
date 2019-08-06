@@ -54,6 +54,12 @@
     <ClCompile Include="degug_window.cpp">
       <Filter>window</Filter>
     </ClCompile>
+    <ClCompile Include="rule_setting_window.cpp">
+      <Filter>window</Filter>
+    </ClCompile>
+    <ClCompile Include="rule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="field.h">
@@ -89,6 +95,12 @@
     <ClInclude Include="degug_window.h">
       <Filter>window</Filter>
     </ClInclude>
+    <ClInclude Include="rule_setting_window.h">
+      <Filter>window</Filter>
+    </ClInclude>
+    <ClInclude Include="rule.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="puyo.rc">
@@ -108,5 +120,6 @@
     <None Include="..\.gitignore">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

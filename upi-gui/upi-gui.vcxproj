@@ -103,12 +103,20 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+    </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="common.cpp" />
@@ -117,6 +125,8 @@
     <ClCompile Include="manage_engine_window.cpp" />
     <ClCompile Include="move.cpp" />
     <ClCompile Include="pipe.cpp" />
+    <ClCompile Include="rule.cpp" />
+    <ClCompile Include="rule_setting_window.cpp" />
     <ClCompile Include="upi.cpp" />
     <ClCompile Include="main_window.cpp" />
     <ClCompile Include="field.cpp" />
@@ -131,6 +141,8 @@
     <ClInclude Include="manage_engine_window.h" />
     <ClInclude Include="move.h" />
     <ClInclude Include="pipe.h" />
+    <ClInclude Include="rule.h" />
+    <ClInclude Include="rule_setting_window.h" />
     <ClInclude Include="upi.h" />
     <ClInclude Include="main_window.h" />
     <ClInclude Include="common.h" />
@@ -145,8 +157,16 @@
     <None Include="..\.gitignore" />
     <None Include="..\README.md" />
     <None Include="..\UPI.md" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="packages\boost.1.70.0.0\build\boost.targets" Condition="Exists('packages\boost.1.70.0.0\build\boost.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>このプロジェクトは、このコンピューター上にない NuGet パッケージを参照しています。それらのパッケージをダウンロードするには、[NuGet パッケージの復元] を使用します。詳細については、http://go.microsoft.com/fwlink/?LinkID=322105 を参照してください。見つからないファイルは {0} です。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\boost.1.70.0.0\build\boost.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\boost.1.70.0.0\build\boost.targets'))" />
+  </Target>
 </Project>

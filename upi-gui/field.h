@@ -3,14 +3,7 @@
 #include <cassert>
 #include <random>
 #include "common.h"
-
-enum Time {
-    CHAINTIME  = 60,
-    NEXTTIME   = 7,
-    SETTIME    = 15,
-    FALLTIME   = 2,
-    AUTODROP_FREQ = 50,
-};
+#include "rule.h"
 
 enum Color { 
     EMPTY, WALL, RED, GREEN, BLUE, PURPLE, YELLOW, OBSTACLE
@@ -64,7 +57,7 @@ class Field {
     // フィールドの横幅、高さ（番兵含める）
     static const int FIELD_WIDTH = 8;
     static const int FIELD_HEIGHT = 16;
-    
+
     // おじゃま一個分の点数
     static const int RATE = 70;
 
@@ -81,7 +74,7 @@ class Field {
     // [0] : setすると降るお邪魔
     // [1] : setしても降らないお邪魔
     int ojama[2];
-    
+
     // 次にSETしたとき降るおじゃまぷよ
     int ojamabuf;
 
@@ -89,7 +82,7 @@ class Field {
     GameFase fase;
 
     Tumo* tumo_pool;
-    
+
     // タイマと、現在のぷよ配列番号
     int operation_timer, tumo_number;
 
@@ -107,10 +100,12 @@ class Field {
     // 操作に関する制御用変数
     int Rcnt, Lcnt, Rrocnt, Lrocnt, Dcnt;
 
+    // ルール定数
+    const Rule* rule;
 public:
 
     // 初期化
-    Field(Tumo* t) : tumo_pool(t) {};
+    Field(Tumo* t, Rule* r) : tumo_pool(t), rule(r) {};
 
     void init();
 

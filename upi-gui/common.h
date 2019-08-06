@@ -5,6 +5,7 @@
 #include <fstream>
 #define NOMINMAX
 #include <windows.h>
+#include <cassert>
 
 typedef   signed __int8    int8_t;
 typedef unsigned __int8   uint8_t;

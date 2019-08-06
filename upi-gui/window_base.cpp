@@ -25,6 +25,13 @@ void WindowBase::create(EventID event_id) {
         main_window_handle, (HMENU)event_id, instance_handle, NULL);
 }
 
+void WindowBase::createUpDown(EventID event_id, EventID bady, int upper, int lower, int now) {
+    ChildWindow& w = child_window.at(event_id);
+    w.handle = CreateUpDownControl(WS_CHILD | WS_VISIBLE | WS_BORDER | UDS_ALIGNRIGHT | UDS_SETBUDDYINT,
+        0, 0, 0, 0, main_window_handle, event_id, instance_handle, child_window.at(bady).handle,
+        upper, lower, now); 
+}
+
 // event_idÇ…ëŒâûÇ∑ÇÈwindowÇï¬Ç∂ÇÈÅB
 void WindowBase::close(EventID event_id) {
     SendMessage(child_window.at(event_id).handle, WM_CLOSE, 0, 0);
@@ -91,11 +98,12 @@ std::function<void(HWND, UINT, WPARAM, LPARAM)>& WindowBase::commandHandler(Even
 LRESULT WindowBase::proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
     case WM_CREATE:
+        setHandler();
+
         if (!onCreate()) {
             return false;
         }
-
-        setHandler();
+        
         break;
 
     case MM_MCINOTIFY:
@@ -106,6 +114,7 @@ LRESULT WindowBase::proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
         return onCtlColorStatic(wParam, lParam);
 
     case WM_COMMAND:
+        assert(child_window.find((EventID)LOWORD(wParam)) != child_window.end());
         commandHandler((EventID)LOWORD(wParam))(hWnd, uMsg, wParam, lParam);
         break;
 

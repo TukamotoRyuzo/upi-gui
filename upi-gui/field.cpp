@@ -390,7 +390,7 @@ bool Field::operateTumo(OperationBit key_operation) {
     bool down = false;
 
     if (key_operation & OPE_DOWN) {
-        if (Dcnt++ % FALLTIME == 0) {
+        if (Dcnt++ % rule->fall_time == 0) {
             // 下に移動するのではなく、一定時間ごとに下に下りていく処理を呼ぶためにtrueを返すようにしておく
             down = true;
         }
@@ -430,10 +430,10 @@ void Field::update(Field& enemy, OperationBit key_operation) {
         }
 
         // 自由落下
-        if (operation_timer++ % AUTODROP_FREQ == 0 && !drop()) {
+        if (operation_timer++ % rule->autodrop_time == 0 && !drop()) {
             fase = CHECK_SLIDE;
             Rrocnt = Lrocnt = Dcnt = Rcnt = Lcnt = 0;
-            wait_timer = !Field(*this).slide() ? 0 : SETTIME;
+            wait_timer = !Field(*this).slide() ? 0 : rule->set_time;
         }
 
         break;
@@ -443,7 +443,7 @@ void Field::update(Field& enemy, OperationBit key_operation) {
             wait_timer = 1;
         }
         else {
-            wait_timer = SETTIME;
+            wait_timer = rule->set_time;
             fase = CHECK_VANISH;
         }
 
@@ -490,7 +490,7 @@ void Field::update(Field& enemy, OperationBit key_operation) {
     case CHAIN_VOICE: {
         int slide_frame = slideFrame();
         fase = CHECK_SLIDE;
-        wait_timer = (chain == 1 && slide_frame == 0) ? 0 : CHAINTIME - slide_frame * 2;
+        wait_timer = (chain == 1 && slide_frame == 0) ? 0 : rule->chain_time - slide_frame * 2;
         break;
     }
     case OJAMA_WAIT:
@@ -498,7 +498,7 @@ void Field::update(Field& enemy, OperationBit key_operation) {
         ojamabuf += std::min(30, ojama[0]);
         ojama[0] -= std::min(30, ojama[0]);
         fase = OJAMA_FALLING;
-        wait_timer = NEXTTIME;
+        wait_timer = rule->next_time;
         break;
 
     case OJAMA_FALLING:

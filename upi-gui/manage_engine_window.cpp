@@ -2,6 +2,15 @@
 
 ManageEngineWindow::ManageEngineWindow(HINSTANCE hInst, UPIEngineManager* e) 
     : WindowBase(hInst, TEXT("エンジン管理")), engine_manager(e) {
+    const DWORD style_button = WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON;
+    const DWORD style_listbox = WS_CHILD | WS_VISIBLE | LBS_STANDARD;
+
+    // button
+    child_window[B_ADD_ENGINE] = ChildWindow(TEXT("BUTTON"), TEXT("追加"), style_button, 400, 30, 60, 30);
+    child_window[B_DELETE_ENGINE] = ChildWindow(TEXT("BUTTON"), TEXT("削除"), style_button, 400, 70, 60, 30);
+
+    // list
+    child_window[LIST_ENGINE] = ChildWindow(TEXT("LISTBOX"), TEXT("エンジン一覧"), style_listbox, 30, 30, 350, 530);
 }
 
 bool ManageEngineWindow::createWindow() {
@@ -40,16 +49,6 @@ bool ManageEngineWindow::createWindow() {
 }
 
 bool ManageEngineWindow::onCreate() {
-    const DWORD style_button = WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON;
-    const DWORD style_listbox = WS_CHILD | WS_VISIBLE | LBS_STANDARD;
-
-    // button
-    child_window[B_ADD_ENGINE] = ChildWindow(TEXT("BUTTON"), TEXT("追加"), style_button, 400, 30, 60, 30);
-    child_window[B_DELETE_ENGINE] = ChildWindow(TEXT("BUTTON"), TEXT("削除"), style_button, 400, 70, 60, 30);
-
-    // list
-    child_window[LIST_ENGINE] = ChildWindow(TEXT("LISTBOX"), TEXT("エンジン一覧"), style_listbox, 30, 30, 350, 530);
-
     create(B_ADD_ENGINE);
     create(B_DELETE_ENGINE);
     create(LIST_ENGINE);

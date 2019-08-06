@@ -1,11 +1,24 @@
 #include "degug_window.h"
 #include "common.h"
 
-DebugWindow::DebugWindow(HINSTANCE hInst, HWND hWnd, PipeManager* p1, PipeManager* p2) :
+DebugWindow::DebugWindow(HINSTANCE hInst, HWND hWnd, PipeManager* p1, PipeManager* p2) : 
     WindowBase(hInst, "デバッグログ"),
     parent_window_handle(hWnd),
     pipe1(p1),
     pipe2(p2) {
+    const DWORD style_button = WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON;
+    const DWORD style_edit = WS_CHILD | WS_VISIBLE | WS_HSCROLL | WS_VSCROLL |
+        ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_READONLY |
+        ES_LEFT | ES_MULTILINE;
+
+    // button
+    child_window[B_SEND_MESSAGE_TO_ENGINE1] = ChildWindow(TEXT("BUTTON"), TEXT("エンジン1に送信"), style_button, 300, 310, 140, 30);
+    child_window[B_SEND_MESSAGE_TO_ENGINE2] = ChildWindow(TEXT("BUTTON"), TEXT("エンジン2に送信"), style_button, 450, 310, 140, 30);
+    child_window[B_DELETE_LOG] = ChildWindow(TEXT("BUTTON"), TEXT("ログ消去"), style_button, 600, 310, 80, 30);
+
+    // edit
+    child_window[EDIT_DEBUG_LOG] = ChildWindow(TEXT("edit"), NULL, style_edit, 0, 0, 700, 300);
+    child_window[EDIT_SEND_COMMAND] = ChildWindow(TEXT("edit"), NULL, WS_VISIBLE | WS_CHILD | WS_BORDER | ES_LEFT | ES_AUTOHSCROLL, 30, 310, 260, 30);
 }
 
 bool DebugWindow::createWindow() {
@@ -50,20 +63,6 @@ void DebugWindow::onDestroy() {
 }
 
 bool DebugWindow::onCreate() {
-    const DWORD style_button = WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON;
-    const DWORD style_edit = WS_CHILD | WS_VISIBLE | WS_HSCROLL | WS_VSCROLL |
-        ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_READONLY |
-        ES_LEFT | ES_MULTILINE;
-
-    // button
-    child_window[B_SEND_MESSAGE_TO_ENGINE1] = ChildWindow(TEXT("BUTTON"), TEXT("エンジン1に送信"), style_button, 300, 310, 140, 30);
-    child_window[B_SEND_MESSAGE_TO_ENGINE2] = ChildWindow(TEXT("BUTTON"), TEXT("エンジン2に送信"), style_button, 450, 310, 140, 30);
-    child_window[B_DELETE_LOG] = ChildWindow(TEXT("BUTTON"), TEXT("ログ消去"), style_button, 600, 310, 80, 30);
-
-    // edit
-    child_window[EDIT_DEBUG_LOG] = ChildWindow(TEXT("edit"), NULL, style_edit, 0, 0, 700, 300);
-    child_window[EDIT_SEND_COMMAND] = ChildWindow(TEXT("edit"), NULL, WS_VISIBLE | WS_CHILD | WS_BORDER | ES_LEFT | ES_AUTOHSCROLL, 30, 310, 260, 30);
-
     create(B_SEND_MESSAGE_TO_ENGINE1);
     create(B_SEND_MESSAGE_TO_ENGINE2);
     create(B_DELETE_LOG);
@@ -89,6 +88,7 @@ void DebugWindow::setHandler() {
                 char* buf = new char[count + 1];
                 GetWindowText(child_window.at(EDIT_SEND_COMMAND).handle, buf, count + 1);
                 pipe1->sendMessage(std::string(buf));
+                delete buf;
             }
         }
     };
@@ -100,6 +100,7 @@ void DebugWindow::setHandler() {
                 char* buf = new char[count + 1];
                 GetWindowText(child_window.at(EDIT_SEND_COMMAND).handle, buf, count + 1);
                 pipe2->sendMessage(std::string(buf));
+                delete buf;
             }
         }
     };

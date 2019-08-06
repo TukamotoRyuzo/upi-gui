@@ -8,9 +8,37 @@
 #include "main_window.h"
 #include "manage_engine_window.h"
 #include "degug_window.h"
+#include "rule_setting_window.h"
 
 MainWindow::MainWindow(HINSTANCE hInst) : WindowBase(hInst, TEXT("upi-gui")), game(this) {
+    const DWORD style_button = WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON;
+    const DWORD style_check = WS_CHILD | WS_VISIBLE | BS_CHECKBOX;
+    const DWORD style_combo = WS_CHILD | WS_VISIBLE | CBS_SORT | CBS_DROPDOWNLIST;
 
+    // button
+    child_window[B_START] = ChildWindow(TEXT("BUTTON"), TEXT("start"), style_button, 440, 300, 100, 50);
+    child_window[B_STOP] = ChildWindow(TEXT("BUTTON"), TEXT("■"), style_button, 475, 380, 30, 15);
+    child_window[B_RESTART] = ChildWindow(TEXT("BUTTON"), TEXT("▲"), style_button, 475, 380, 30, 15);
+
+    // combobox
+    child_window[COMBO_AI1P] = ChildWindow(TEXT("COMBOBOX"), NULL, style_combo | WS_DISABLED, 375, 580, 100, 600);
+    child_window[COMBO_AI2P] = ChildWindow(TEXT("COMBOBOX"), NULL, style_combo | WS_DISABLED, 500, 580, 100, 600);
+
+    // checkbox
+    child_window[CHECK_AI1P] = ChildWindow(TEXT("BUTTON"), TEXT("AI"), style_check, 433, 540, 40, 30);
+    child_window[CHECK_AI2P] = ChildWindow(TEXT("BUTTON"), TEXT("AI"), style_check, 500, 540, 40, 30);
+    child_window[CHECK_CONTINUE_BATTLE] = ChildWindow(TEXT("BUTTON"), TEXT("Continuous"), style_check, 433, 490, 130, 30);
+    child_window[CHECK_PLAY_SOUND] = ChildWindow(TEXT("BUTTON"), TEXT("Voice"), style_check, 433, 515, 130, 30);
+
+    // menuは皮だけ作っておこう
+    for (EventID eid = MOK_START; eid < MOK_END; eid = EventID(eid + 1)) {
+        child_window[eid] = ChildWindow();
+    }
+
+    // bitmap
+    mdc[MEMORY] = BitmapMDC();
+    mdc[PUYO] = BitmapMDC("IDB_BITMAP3");
+    mdc[FIELD] = BitmapMDC("IDB_BITMAP1");
 }
 
 // ウィンドウ生成
@@ -51,35 +79,6 @@ bool MainWindow::createWindow() {
 
 // WM_CREATE発行時(ウィンドウ生成時)に行われる処理
 bool MainWindow::onCreate() {
-    const DWORD style_button = WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON;
-    const DWORD style_check = WS_CHILD | WS_VISIBLE | BS_CHECKBOX;
-    const DWORD style_combo = WS_CHILD | WS_VISIBLE | CBS_SORT | CBS_DROPDOWNLIST;
-
-    // button
-    child_window[B_START] = ChildWindow(TEXT("BUTTON"), TEXT("start"), style_button, 440, 300, 100, 50);
-    child_window[B_STOP] = ChildWindow(TEXT("BUTTON"), TEXT("■"), style_button, 475, 380, 30, 15);
-    child_window[B_RESTART] = ChildWindow(TEXT("BUTTON"), TEXT("▲"), style_button, 475, 380, 30, 15);
-
-    // combobox
-    child_window[COMBO_AI1P] = ChildWindow(TEXT("COMBOBOX"), NULL, style_combo | WS_DISABLED, 375, 580, 100, 600);
-    child_window[COMBO_AI2P] = ChildWindow(TEXT("COMBOBOX"), NULL, style_combo | WS_DISABLED, 500, 580, 100, 600);
-
-    // checkbox
-    child_window[CHECK_AI1P] = ChildWindow(TEXT("BUTTON"), TEXT("AI"), style_check, 433, 540, 40, 30);
-    child_window[CHECK_AI2P] = ChildWindow(TEXT("BUTTON"), TEXT("AI"), style_check, 500, 540, 40, 30);
-    child_window[CHECK_CONTINUE_BATTLE] = ChildWindow(TEXT("BUTTON"), TEXT("Continuous"), style_check, 433, 490, 130, 30);
-    child_window[CHECK_PLAY_SOUND] = ChildWindow(TEXT("BUTTON"), TEXT("Voice"), style_check, 433, 515, 130, 30);
-
-    // menuは皮だけ作っておこう
-    for (EventID eid = MOK_START; eid < MOK_END; eid = EventID(eid + 1)) {
-        child_window[eid] = ChildWindow();
-    }
-
-    // bitmap
-    mdc[MEMORY] = BitmapMDC();
-    mdc[PUYO] = BitmapMDC("IDB_BITMAP3");
-    mdc[FIELD] = BitmapMDC("IDB_BITMAP1");
-
     // 音声ファイルの読み込み
     if (!initMCI()) {
         return false;
@@ -370,6 +369,20 @@ void MainWindow::setHandler() {
         else {
             DestroyWindow(debug_window->mainWindowHandle());
         }
+    };
+
+    commandHandler(MENU_RULE_SETTING) = [&](HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+        RuleSettingWindow rsw(instance_handle, &game.rule);
+
+        if (!rsw.init()) {
+            onDestroy();
+            return;
+        }
+
+        EnableWindow(main_window_handle, false);
+        rsw.doMessageLoop();
+        EnableWindow(main_window_handle, true);
+        SetFocus(main_window_handle);
     };
 
     commandHandler(DEBUG_WINDOW_DESTROYED) = [&](HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
