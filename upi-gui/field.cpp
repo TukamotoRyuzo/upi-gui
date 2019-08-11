@@ -65,6 +65,7 @@ void Field::init() {
     this->score = 0;
     this->scoresum = 0;
     this->wait_timer = 0;    
+    this->ojama_rand_count = 0;
 
     for (int x = 0; x < FIELD_WIDTH; x++) {
         for (int y = 0; y < FIELD_HEIGHT; y++) {
@@ -223,7 +224,14 @@ void Field::putOjama() {
     if (ojamabuf) {
         // シャッフル
         int v[] = { 1, 2, 3, 4, 5, 6 };
-        std::shuffle(v, std::end(v), std::mt19937());
+        //std::shuffle(v, std::end(v), std::mt19937());
+
+        for (int x = 0; x < 6; x++) {
+            Tumo t = getTumo(ojama_rand_count);
+            int r = (t.color[0] + t.color[1]) % 6;
+            std::swap(v[x], v[r]);
+            ojama_rand_count = (ojama_rand_count + 1) % 128;
+        }
 
         // 並べる個数は最大6個まで。
         int max = std::min(ojamabuf, 6);

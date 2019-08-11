@@ -60,6 +60,9 @@
     <ClCompile Include="rule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="battle_history.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="field.h">
@@ -99,6 +102,9 @@
       <Filter>window</Filter>
     </ClInclude>
     <ClInclude Include="rule.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="battle_history.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -6,6 +6,8 @@
 #define NOMINMAX
 #include <windows.h>
 #include <cassert>
+#include <vector>
+#include <sstream>
 
 typedef   signed __int8    int8_t;
 typedef unsigned __int8   uint8_t;
@@ -91,6 +93,35 @@ inline void deleteCRLF(std::string& targetStr) {
         }
     }
     targetStr = std::move(destStr);
+}
+
+// YYYYMMDDŒ`Ž®‚ÅŒ»ÝŽž‚ð•b‚Ü‚ÅB
+inline std::string timeStamp() {
+    char buff[20] = "";
+    time_t now = time(NULL);
+    struct tm* pnow = new struct tm;
+#if defined _MSC_VER
+    localtime_s(pnow, &now);
+#else
+    localtime_r(&now, pnow);
+#endif
+    snprintf(buff, 15, "%04d%02d%02d%02d%02d%02d", pnow->tm_year + 1900, pnow->tm_mon + 1, pnow->tm_mday,
+        pnow->tm_hour, pnow->tm_min, pnow->tm_sec);
+    delete pnow;
+    return std::string(buff);
+}
+
+// •¶Žš—ñ‚Ì•ªŠ„
+inline std::vector<std::string> split(const std::string& str, char sep) {
+    std::vector<std::string> v;
+    std::stringstream ss(str);
+    std::string buffer;
+
+    while (std::getline(ss, buffer, sep)) {
+        v.push_back(buffer);
+    }
+
+    return v;
 }
 
 namespace Log {

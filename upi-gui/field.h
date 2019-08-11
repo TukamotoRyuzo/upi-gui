@@ -102,6 +102,9 @@ class Field {
 
     // ルール定数
     const Rule* rule;
+
+    // おじゃまぷよ落下場所決定アルゴリズム固定化のためのカウンター
+    int ojama_rand_count;
 public:
 
     // 初期化
@@ -162,6 +165,10 @@ public:
 
     Tumo getTumo() const {
         return tumo_pool[tumo_number];
+    }
+
+    Tumo getTumo(int index) const {
+        return tumo_pool[index];
     }
 
     void floorList(int* list) const {

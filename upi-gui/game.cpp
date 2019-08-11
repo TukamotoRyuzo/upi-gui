@@ -19,6 +19,10 @@ void Game::init() {
     p2.init();
     initTumo();
     start_time = now();
+
+    // リプレイ情報の初期化
+    battle_history.init(rule, p1.name, p2.name, tumos);
+    replay_mode = false;
 }
 
 void Game::stop() {
@@ -54,6 +58,13 @@ void Game::onFase(GameFase bf, GameFase gf, Player& player, int chain) {
         }
 
         p1_win ? p1.win++ : p2.win++;
+
+        if (!replay_mode) {
+            std::string replay_file_name = "";
+            replay_file_name += battle_history.player_1p_name + "_vs_" + battle_history.player_2p_name + "_" + timeStamp() + ".puyofu";
+            battle_history.save("replay/" + replay_file_name);
+        }
+
         main_window->gameOver();
     }
 
@@ -61,7 +72,7 @@ void Game::onFase(GameFase bf, GameFase gf, Player& player, int chain) {
     else if (bf == NEXT) {        
         if (player.status & PLAYER_AI) {
             if (player.status & PLAYER1) {
-                upi.setEngineMove(p1.pipe, p1.field, p2.field, p1.operation);                
+                upi.setEngineMove(p1.pipe, p1.field, p2.field, p1.operation);
             }
             else {
                 upi.setEngineMove(p2.pipe, p2.field, p1.field, p2.operation);
@@ -100,39 +111,58 @@ void Game::onFase(GameFase bf, GameFase gf, Player& player, int chain) {
 OperationBit Game::getKeyOperation(PlayerStatus status) {
     OperationBit operation = NO_OPERATION;
 
-    if (status & PLAYER_AI) {
+    if (replay_mode) {
         if (status & PLAYER1) {
-            if (p1.operation.size()) {
-                operation = p1.operation.pop();
+            operation = battle_history.move_history_1p.front();
+            battle_history.move_history_1p.pop_front();
+        }
+        else {
+            operation = battle_history.move_history_2p.front();
+            battle_history.move_history_2p.pop_front();
+        }
+    }
+    else {
+        if (status & PLAYER_AI) {
+            if (status & PLAYER1) {
+                if (p1.operation.size()) {
+                    operation = p1.operation.pop();
+                }
+            }
+            else {
+                if (p2.operation.size()) {
+                    operation = p2.operation.pop();
+                }
             }
         }
         else {
-            if (p2.operation.size()) {
-                operation = p2.operation.pop();
-            }
-        }        
-    }
-    else {
-        int keys[2][5] = {
-            { VK_LEFT, VK_RIGHT, VK_M, VK_N, VK_DOWN },
-            { VK_A, VK_D, VK_G, VK_F, VK_S }
-        };
+            int keys[2][5] = {
+                { VK_LEFT, VK_RIGHT, VK_M, VK_N, VK_DOWN },
+                { VK_A, VK_D, VK_G, VK_F, VK_S }
+            };
 
-        int p = (status & PLAYER1) ? 0 : 1;
-        if (GetAsyncKeyState(keys[p][0])) {
-            operation |= OPE_LEFT;
+            int p = (status & PLAYER1) ? 0 : 1;
+            if (GetAsyncKeyState(keys[p][0])) {
+                operation |= OPE_LEFT;
+            }
+            else if (GetAsyncKeyState(keys[p][1])) {
+                operation |= OPE_RIGHT;
+            }
+            if (GetAsyncKeyState(keys[p][2])) {
+                operation |= OPE_R_ROTATE;
+            }
+            else if (GetAsyncKeyState(keys[p][3])) {
+                operation |= OPE_L_ROTATE;
+            }
+            if (GetAsyncKeyState(keys[p][4])) {
+                operation |= OPE_DOWN;
+            }
         }
-        else if (GetAsyncKeyState(keys[p][1])) {
-            operation |= OPE_RIGHT;
+
+        if (status & PLAYER1) {
+            battle_history.move_history_1p.push_back(operation);
         }
-        if (GetAsyncKeyState(keys[p][2])) {
-            operation |= OPE_R_ROTATE;
-        }
-        else if (GetAsyncKeyState(keys[p][3])) {
-            operation |= OPE_L_ROTATE;
-        }
-        if (GetAsyncKeyState(keys[p][4])) {
-            operation |= OPE_DOWN;
+        else {
+            battle_history.move_history_2p.push_back(operation);
         }
     }
 

@@ -214,3 +214,5 @@ ModelManifest.xml
 *opendb
 *VC.db
 engine_list.csv
+*.puyofu
+rule.xml

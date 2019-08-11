@@ -119,6 +119,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="battle_history.cpp" />
     <ClCompile Include="common.cpp" />
     <ClCompile Include="degug_window.cpp" />
     <ClCompile Include="engine.cpp" />
@@ -135,6 +136,7 @@
     <ClCompile Include="window_base.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="battle_history.h" />
     <ClInclude Include="degug_window.h" />
     <ClInclude Include="engine.h" />
     <ClInclude Include="game.h" />

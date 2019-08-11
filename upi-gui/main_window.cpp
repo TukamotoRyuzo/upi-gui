@@ -266,17 +266,18 @@ void MainWindow::setHandler() {
         close(B_RESTART);
         create(B_STOP);
 
-        // ゲーム開始
-        game.init();
-        SetTimer(mainWindowHandle(), 100, 10, NULL);
-
         UPIManager upi;
+        game.p1.name = "you";
+        game.p2.name = "you";
 
         // AIにチェックが入っていればエンジンを起動する。
         auto launchEngine = [&](EventID eid, PipeManager& pm) {
-            int engine_id = SendMessage(child_window[eid].handle, CB_GETCURSEL, 0, 0);            
+            int engine_id = SendMessage(child_window[eid].handle, CB_GETCURSEL, 0, 0);
             pm.executeProcess(engine_manager.getUPIEngineList().at(engine_id).engine_path);            
             upi.launchEngine(pm, game.getTumo());
+            char buf[1000];
+            SendMessage(child_window[eid].handle, CB_GETLBTEXT, engine_id, (LPARAM)buf);
+            (eid == COMBO_AI1P ? game.p1 : game.p2).name = std::string(buf);
         };
 
         if (game.p1.status & PLAYER_AI) {
@@ -285,6 +286,10 @@ void MainWindow::setHandler() {
         if (game.p2.status & PLAYER_AI) {
             launchEngine(COMBO_AI2P, game.p2.pipe);
         }
+
+        // ゲーム開始
+        game.init();
+        SetTimer(mainWindowHandle(), 100, 10, NULL);
     };
 
     commandHandler(B_STOP) = [&](HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
