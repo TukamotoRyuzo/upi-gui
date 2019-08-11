@@ -35,7 +35,9 @@ class Game {
 public:
     Rule rule;
     Player p1, p2;
-    Game(MainWindow* w) : p1(PLAYER1, tumos, &rule), p2(NO_PLAYER_FLAG, tumos, &rule), main_window(w) {};
+    Game(MainWindow* w) : p1(PLAYER1, tumos, &rule), p2(NO_PLAYER_FLAG, tumos, &rule), main_window(w) {
+        rule.load();
+    };
     void init();
     void initTumo();
     const Tumo* getTumo() const {
