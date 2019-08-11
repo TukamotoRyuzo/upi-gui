@@ -100,6 +100,31 @@ bool MainWindow::onCreate() {
     game.init();
     game.show();
     initEngineList();
+
+    // 前回の入力状態を再現する
+    Rule& r = game.rule;
+
+    if (r.ai_1p) {
+        commandHandler(CHECK_AI1P)(main_window_handle, WM_COMMAND, 0, 0);
+    }
+    if (r.ai_2p) {
+        commandHandler(CHECK_AI2P)(main_window_handle, WM_COMMAND, 0, 0);
+    }
+    if (r.continuous) {
+        commandHandler(CHECK_CONTINUE_BATTLE)(main_window_handle, WM_COMMAND, 0, 0);
+    }
+    if (r.voice) {
+        commandHandler(CHECK_PLAY_SOUND)(main_window_handle, WM_COMMAND, 0, 0);
+    }
+    if (r.engine_name_1p.size()) {
+        int index = SendMessage(child_window[COMBO_AI1P].handle, CB_FINDSTRINGEXACT, -1, (LPARAM)r.engine_name_1p.c_str());
+        SendMessage(child_window[COMBO_AI1P].handle, CB_SETCURSEL, index, 0);
+    }
+    if (r.engine_name_2p.size()) {
+        int index = SendMessage(child_window[COMBO_AI2P].handle, CB_FINDSTRINGEXACT, -1, (LPARAM)r.engine_name_2p.c_str());
+        SendMessage(child_window[COMBO_AI2P].handle, CB_SETCURSEL, index, 0);
+    }
+
     InvalidateRect(main_window_handle, NULL, false);
     ShowWindow(main_window_handle, SW_SHOW);
     return true;
@@ -191,6 +216,18 @@ void MainWindow::onDestroy() {
         delete debug_window;
     }
 
+    game.rule.ai_1p = isChecked(CHECK_AI1P);
+    game.rule.ai_2p = isChecked(CHECK_AI2P);
+    game.rule.continuous = isChecked(CHECK_CONTINUE_BATTLE);
+    game.rule.voice = isChecked(CHECK_PLAY_SOUND);
+    char buf[1000];
+    int index = SendMessage(child_window[COMBO_AI1P].handle, CB_GETCURSEL, 0, 0);
+    SendMessage(child_window[COMBO_AI1P].handle, CB_GETLBTEXT, index, (LPARAM)buf);
+    game.rule.engine_name_1p = std::string(buf);
+    index = SendMessage(child_window[COMBO_AI2P].handle, CB_GETCURSEL, 0, 0);
+    SendMessage(child_window[COMBO_AI2P].handle, CB_GETLBTEXT, index, (LPARAM)buf);
+    game.rule.engine_name_2p = std::string(buf);
+    game.rule.save();
     WindowBase::onDestroy();
 }
 

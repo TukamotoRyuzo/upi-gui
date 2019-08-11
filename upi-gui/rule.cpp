@@ -6,26 +6,33 @@
 #include <boost/lexical_cast.hpp>
 #include <iostream>
 
+template <typename T>
+void getXMLValue(boost::property_tree::ptree& pt, std::string key, T& ref) {
+    boost::optional<T> value = pt.get_optional<T>(key);
+    if (value) {
+        ref = value.get();
+        std::cout << ref << std::endl;
+    }
+    else {
+        throw std::runtime_error(("no such property: " + key).c_str());
+    }
+};
+
 void Rule::load() {
     try {
         boost::property_tree::ptree pt;
         read_xml("rule.xml", pt);
-
-        auto getXMLValue = [&pt](std::string key, int& value) {
-            boost::optional<std::string> str = pt.get_optional<std::string>(key);
-            if (str) {
-                value = std::stoi(str.get());
-            }
-            else {
-                throw std::runtime_error(("no such property: " + str.get()).c_str());
-            }
-        };
-
-        getXMLValue("Rule.ChainTime", chain_time);
-        getXMLValue("Rule.NextTime", next_time);
-        getXMLValue("Rule.SetTime", set_time);
-        getXMLValue("Rule.FallTime", fall_time);
-        getXMLValue("Rule.AutoDropTime", autodrop_time);
+        getXMLValue(pt, "Root.Rule.ChainTime", chain_time);
+        getXMLValue(pt, "Root.Rule.NextTime", next_time);
+        getXMLValue(pt, "Root.Rule.SetTime", set_time);
+        getXMLValue(pt, "Root.Rule.FallTime", fall_time);
+        getXMLValue(pt, "Root.Rule.AutoDropTime", autodrop_time);
+        getXMLValue(pt, "Root.Setting.Continuous", continuous);
+        getXMLValue(pt, "Root.Setting.Voice", voice);
+        getXMLValue(pt, "Root.Setting.ai_1p", ai_1p);
+        getXMLValue(pt, "Root.Setting.ai_2p", ai_2p);
+        getXMLValue(pt, "Root.Setting.engine_name_1p", engine_name_1p);
+        getXMLValue(pt, "Root.Setting.engine_name_2p", engine_name_2p);
     }
     catch (std::exception& ex) {
         std::cerr << ex.what() << std::endl;
@@ -34,12 +41,17 @@ void Rule::load() {
 
 void Rule::save() {
     boost::property_tree::ptree pt;
-    boost::property_tree::ptree& child = pt.add("Rule", "");
-    child.put("ChainTime", this->chain_time);
-    child.put("NextTime", this->next_time);
-    child.put("SetTime", this->set_time);
-    child.put("FallTime", this->fall_time);
-    child.put("AutoDropTime", this->autodrop_time);
+    pt.put("Root.Rule.ChainTime", chain_time);
+    pt.put("Root.Rule.NextTime", next_time);
+    pt.put("Root.Rule.SetTime", set_time);
+    pt.put("Root.Rule.FallTime", fall_time);
+    pt.put("Root.Rule.AutoDropTime", autodrop_time);
+    pt.put("Root.Setting.Continuous", continuous);
+    pt.put("Root.Setting.Voice", voice);
+    pt.put("Root.Setting.ai_1p", ai_1p);
+    pt.put("Root.Setting.ai_2p", ai_2p);
+    pt.put("Root.Setting.engine_name_1p", engine_name_1p);
+    pt.put("Root.Setting.engine_name_2p", engine_name_2p);
 
     const int indent = 2;
     write_xml("rule.xml", pt, std::locale(),

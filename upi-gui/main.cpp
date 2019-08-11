@@ -1,7 +1,7 @@
 ﻿#include "main_window.h"
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdLine, int cmdShow) {
-    Log::start();    
+    Log::start();
     MainWindow main_window(hInst);
 
     if (!main_window.init()) {
