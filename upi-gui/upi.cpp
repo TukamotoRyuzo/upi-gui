@@ -131,6 +131,7 @@ Move UPIManager::bestmove(PipeManager& p, Field& field) {
         std::string pfen;
         p.recvMessage(pfen);
         Log::write("Illegal move: " + move + ", pfen = " + pfen + "\n");
+        Move mm = upiToMove(move, field);
     }
 
     return m;

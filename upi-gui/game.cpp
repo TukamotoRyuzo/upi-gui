@@ -17,12 +17,20 @@ void Game::initTumo() {
 void Game::init() {
     p1.init();
     p2.init();
-    initTumo();
-    start_time = now();
-
+    
     // リプレイ情報の初期化
-    battle_history.init(rule, p1.name, p2.name, tumos);
-    replay_mode = false;
+    if (!replay_mode) {
+        initTumo();
+    }
+
+    // リプレイ情報からツモ再生
+    else {
+        for (int i = 0; i < TUMO_MAX; i++) {
+            tumos[i] = battle_history.tumo_history[i];
+        }
+    }
+
+    start_time = now();
 }
 
 void Game::stop() {
@@ -64,18 +72,21 @@ void Game::onFase(GameFase bf, GameFase gf, Player& player, int chain) {
             replay_file_name += battle_history.player_1p_name + "_vs_" + battle_history.player_2p_name + "_" + timeStamp() + ".puyofu";
             battle_history.save("replay/" + replay_file_name);
         }
-
+        
         main_window->gameOver();
+        replay_mode = false;
     }
 
     // engineに考えさせる
-    else if (bf == NEXT) {        
-        if (player.status & PLAYER_AI) {
-            if (player.status & PLAYER1) {
-                upi.setEngineMove(p1.pipe, p1.field, p2.field, p1.operation);
-            }
-            else {
-                upi.setEngineMove(p2.pipe, p2.field, p1.field, p2.operation);
+    else if (bf == NEXT) {
+        if (!replay_mode) {
+            if (player.status & PLAYER_AI) {
+                if (player.status & PLAYER1) {
+                    upi.setEngineMove(p1.pipe, p1.field, p2.field, p1.operation);
+                }
+                else {
+                    upi.setEngineMove(p2.pipe, p2.field, p1.field, p2.operation);
+                }
             }
         }
     }

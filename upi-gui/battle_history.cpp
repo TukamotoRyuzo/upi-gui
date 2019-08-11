@@ -11,7 +11,7 @@ void BattleHistory::clear() {
 }
 
 // ƒŠƒvƒŒƒCî•ñ‚Ì‰Šú‰»
-void BattleHistory::init(Rule r, std::string p1_name, std::string p2_name, Tumo* tumo) {
+void BattleHistory::init(Rule r, std::string p1_name, std::string p2_name, const Tumo* tumo) {
     clear();
     rule = r;
     player_1p_name = p1_name;
@@ -22,22 +22,23 @@ void BattleHistory::init(Rule r, std::string p1_name, std::string p2_name, Tumo*
     }
 }
 
-void BattleHistory::load(std::string filename) {
+bool BattleHistory::load(std::string filename) {
     std::ifstream ifs(filename);
 
     if (ifs.fail()) {
-        return;
+        return false;
     }
 
     // ƒcƒ‚‚ð“Ç‚Ýž‚Þ
     std::string line;
 
     if (!std::getline(ifs, line)) {
-        return;
+        return false;
     }
 
+    clear();
     std::stringstream tumo_ss(line);
-
+    
     while (!tumo_ss.eof()) {
         int p, c;
         tumo_ss >> p >> c;
@@ -46,12 +47,12 @@ void BattleHistory::load(std::string filename) {
 
     // 1p‚Ì‘€ì‚ð“Ç‚Ýž‚Þ
     if (!std::getline(ifs, line)) {
-        return;
+        return false;
     }
 
     std::stringstream move_1p_ss(line);
 
-    while (!tumo_ss.eof()) {
+    while (!move_1p_ss.eof()) {
         int ob;
         move_1p_ss >> ob;
         move_history_1p.push_back(OperationBit(ob));
@@ -59,16 +60,18 @@ void BattleHistory::load(std::string filename) {
 
     // 2p‚Ì‘€ì‚ð“Ç‚Ýž‚Þ
     if (!std::getline(ifs, line)) {
-        return;
+        return false;
     }
 
     std::stringstream move_2p_ss(line);
 
-    while (!tumo_ss.eof()) {
+    while (!move_2p_ss.eof()) {
         int ob;
         move_2p_ss >> ob;
         move_history_2p.push_back(OperationBit(ob));
     }
+
+    return true;
 }
 
 void BattleHistory::save(std::string filename) {

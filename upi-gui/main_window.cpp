@@ -280,15 +280,20 @@ void MainWindow::setHandler() {
             (eid == COMBO_AI1P ? game.p1 : game.p2).name = std::string(buf);
         };
 
-        if (game.p1.status & PLAYER_AI) {
-            launchEngine(COMBO_AI1P, game.p1.pipe);
-        }
-        if (game.p2.status & PLAYER_AI) {
-            launchEngine(COMBO_AI2P, game.p2.pipe);
-        }
-
         // ゲーム開始
         game.init();
+
+        if (!game.replay_mode) {
+            if (game.p1.status & PLAYER_AI) {
+                launchEngine(COMBO_AI1P, game.p1.pipe);
+            }
+            if (game.p2.status & PLAYER_AI) {
+                launchEngine(COMBO_AI2P, game.p2.pipe);
+            }
+
+            game.battle_history.init(game.rule, game.p1.name, game.p2.name, game.getTumo());
+        }
+
         SetTimer(mainWindowHandle(), 100, 10, NULL);
     };
 
@@ -384,6 +389,31 @@ void MainWindow::setHandler() {
         }
     };
 
+    commandHandler(MENU_OPEN_PUYOFU) = [&](HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+        static OPENFILENAME ofn = { 0 };
+        static TCHAR szPath[MAX_PATH] = ".";
+        static TCHAR szFile[MAX_PATH];
+        ofn.lStructSize = sizeof(OPENFILENAME);
+        ofn.hwndOwner = hWnd;
+        ofn.lpstrInitialDir = NULL; // 初期フォルダ位置
+        ofn.lpstrFile = szFile;       // 選択ファイル格納
+        ofn.nMaxFile = MAX_PATH;
+        ofn.lpstrFilter = TEXT("puyofuファイル(*.puyofu)\0*.puyofu;\0")
+            TEXT("すべてのファイル(*.*)\0*.*\0");
+        ofn.lpstrTitle = TEXT("思考エンジンを選択");
+
+        // OFN_NOCHANGEDIR: カレントディレクトリを変更しないフラグ
+        // これを指定しないとファイルを選択したときにカレントディレクトリが選択したファイルの場所に変更されてしまう。
+        ofn.Flags = OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+
+        if (GetOpenFileName(&ofn)) {
+            if (game.battle_history.load(ofn.lpstrFile)) {
+                game.replay_mode = true;
+                commandHandler(B_START)(main_window_handle, 0, 0, 0);
+            }
+        }
+    };
+    
     commandHandler(MENU_ADD_ENGINE) = [&](HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         ManageEngineWindow mew(instance_handle, &engine_manager);
 
@@ -473,7 +503,7 @@ void MainWindow::onTimer() {
 }
 
 void MainWindow::gameOver() {
-    if (!isChecked(CHECK_CONTINUE_BATTLE)) {
+    if (!isChecked(CHECK_CONTINUE_BATTLE) || game.replay_mode) {
         KillTimer(main_window_handle, 100);
         close(B_STOP);
         enable(CHECK_AI1P);

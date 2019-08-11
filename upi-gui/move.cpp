@@ -33,41 +33,23 @@ MoveList::MoveList(const Field& f) {
     f.floorList(floor_list);
     setRange(floor_list, &left, &right);
 
-    if (now.color[0] == now.color[1]) {
-        for (x = left; x < right; x++) {
-            int up = floor_list[x];
-            int up_side = floor_list[x + 1];
-            Square dest = toSquare(x, up);
-            Square dest_up = dest + SQ_UP;
-            Square dest_side = toSquare(x + 1, up_side);
-            bool is_tigiri = (up != up_side);
-            push_back(makeMove(dest, dest_up));
-            push_back(makeMove(dest, dest_side));
-        }
-
-        Square dest = toSquare(x, floor_list[x]);
+    for (x = left; x < right; x++) {
+        int up = floor_list[x];
+        int up_side = floor_list[x + 1];
+        Square dest = toSquare(x, up);
         Square dest_up = dest + SQ_UP;
-        push_back(makeMove(dest, dest_up));
-    }
-    else {
-        for (x = left; x < right; x++) {
-            int up = floor_list[x];
-            int up_side = floor_list[x + 1];
-            Square dest = toSquare(x, up);
-            Square dest_up = dest + SQ_UP;
-            Square dest_side = toSquare(x + 1, up_side);
-            bool is_tigiri = (up != up_side);
-            push_back(makeMove(dest, dest_up));
-            push_back(makeMove(dest_up, dest));
-            push_back(makeMove(dest, dest_side, is_tigiri));
-            push_back(makeMove(dest_side, dest, is_tigiri));
-        }
-
-        Square dest = toSquare(x, floor_list[x]);
-        Square dest_up = dest + SQ_UP;
+        Square dest_side = toSquare(x + 1, up_side);
+        bool is_tigiri = (up != up_side);
         push_back(makeMove(dest, dest_up));
         push_back(makeMove(dest_up, dest));
+        push_back(makeMove(dest, dest_side, is_tigiri));
+        push_back(makeMove(dest_side, dest, is_tigiri));
     }
+
+    Square dest = toSquare(x, floor_list[x]);
+    Square dest_up = dest + SQ_UP;
+    push_back(makeMove(dest, dest_up));
+    push_back(makeMove(dest_up, dest));
 }
 
 // upi形式の指し手を内部データに変換する。

@@ -19,7 +19,7 @@ struct BattleHistory {
     std::deque<OperationBit> move_history_2p;
 
     void clear();
-    void init(Rule r, std::string p1_name, std::string p2_name, Tumo* tumo);
-    void load(std::string filename);
+    void init(Rule r, std::string p1_name, std::string p2_name, const Tumo* tumo);
+    bool load(std::string filename);
     void save(std::string filename);
 };
