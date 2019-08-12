@@ -6,25 +6,33 @@
 #include "engine.h"
 
 #include <thread>
+#include <atomic>
 
 class UPIManager {
     static const int TUMO_MAX = 128;
     std::string getTumo128ToString(const Tumo* tumo) const;
+    std::thread receive_thread;
+    std::atomic_bool active;    
 public:
+    PipeManager pipe;
+
     // server -> client
-    void upi(PipeManager& p);    
-    void tumo(PipeManager& p, const Tumo* tumo);
-    void position(PipeManager& p, Field& self, Field& enemy);
-    void isready(PipeManager& p);
-    void go(PipeManager& p);
-    void quit(PipeManager& p);
-    void gameover(PipeManager& p, bool win);
+    void upi();    
+    void tumo(const Tumo* tumo);
+    void position(Field& self, Field& enemy);
+    void isready();
+    void go();
+    void quit();
+    void gameover(bool win);
 
     // client -> server
-    EngineInfo id(PipeManager& p);
-    Move bestmove(PipeManager& p, Field& field);
+    EngineInfo id();
+    Move bestmove(Field& field);
 
     // set
-    void setEngineMove(PipeManager& p, Field& self, Field& enemy, OperationQueue& queue);
-    void launchEngine(PipeManager& p, const Tumo* tumo);
+    void setEngineMove(Field& self, Field& enemy, OperationQueue& queue);
+    void launchEngine(const Tumo* tumo);
+
+    // レシーブスレッドの開始
+    void doRecvLoop();
 };

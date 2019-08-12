@@ -59,10 +59,10 @@ void Game::onFase(GameFase bf, GameFase gf, Player& player, int chain) {
         bool p1_win = (player.status & PLAYER1) ? false : true;
 
         if (p1.status & PLAYER_AI) {
-            upi.gameover(p1.pipe, p1_win);
+            p1.upi.gameover(p1_win);
         }
         if (p2.status & PLAYER_AI) {
-            upi.gameover(p2.pipe, !p1_win);
+            p2.upi.gameover(!p1_win);
         }
 
         p1_win ? p1.win++ : p2.win++;
@@ -82,10 +82,10 @@ void Game::onFase(GameFase bf, GameFase gf, Player& player, int chain) {
         if (!replay_mode) {
             if (player.status & PLAYER_AI) {
                 if (player.status & PLAYER1) {
-                    upi.setEngineMove(p1.pipe, p1.field, p2.field, p1.operation);
+                    p1.upi.setEngineMove(p1.field, p2.field, p1.operation);
                 }
                 else {
-                    upi.setEngineMove(p2.pipe, p2.field, p1.field, p2.operation);
+                    p2.upi.setEngineMove(p2.field, p1.field, p2.operation);
                 }
             }
         }

@@ -17,16 +17,16 @@ std::string UPIManager::getTumo128ToString(const Tumo* tumo) const {
     return ss.str();
 }
 
-void UPIManager::upi(PipeManager& p) {
-    p.sendMessage("upi");
+void UPIManager::upi() {
+    pipe.sendMessage("upi");
 }
 
-EngineInfo UPIManager::id(PipeManager& p) {
+EngineInfo UPIManager::id() {
     EngineInfo ei;
     try {
         std::string recv;
 
-        if (p.recvMessage(recv) == -1) {
+        if (pipe.recvMessage(recv) == -1) {
             throw std::runtime_error("upiエンジンではありません。");
         }
 
@@ -48,7 +48,7 @@ EngineInfo UPIManager::id(PipeManager& p) {
             return line;
         };
 
-        ei.engine_path = p.processPath();
+        ei.engine_path = pipe.processPath();
         check(ss, "id");
         check(ss, "name");
         ei.engine_name = extract_value(ss);
@@ -64,11 +64,11 @@ EngineInfo UPIManager::id(PipeManager& p) {
     return ei;
 }
 
-void UPIManager::tumo(PipeManager& p, const Tumo* tumo) {
-    p.sendMessage("tumo " + getTumo128ToString(tumo));
+void UPIManager::tumo(const Tumo* tumo) {
+    pipe.sendMessage("tumo " + getTumo128ToString(tumo));
 }
 
-void UPIManager::position(PipeManager& p, Field& self, Field& enemy) {
+void UPIManager::position(Field& self, Field& enemy) {
     // 相手が行動可能になるまでのフレーム数を計算する
     Field self_clone(self), enemy_clone(enemy);
     int frame = 0;
@@ -92,30 +92,30 @@ void UPIManager::position(PipeManager& p, Field& self, Field& enemy) {
 
     std::stringstream ss;
     ss << "position " << self.toPfen() << " " << enemy.toPfen() << " " << conformed_ojama << " " << unconformed_ojama << " " << frame;
-    p.sendMessage(ss.str());
+    pipe.sendMessage(ss.str());
 }
 
-void UPIManager::isready(PipeManager& p) {
-    p.sendMessage("isready");
+void UPIManager::isready() {
+    pipe.sendMessage("isready");
 }
 
-void UPIManager::go(PipeManager& p) {
-    p.sendMessage("go");
+void UPIManager::go() {
+    pipe.sendMessage("go");
 }
 
-void UPIManager::quit(PipeManager& p) {
-    p.sendMessage("quit");
-    p.closeProcess();
+void UPIManager::quit() {
+    pipe.sendMessage("quit");
+    pipe.closeProcess();
 }
 
-void UPIManager::gameover(PipeManager& p, bool win) {
+void UPIManager::gameover(bool win) {
     std::string win_string = (win ? "win" : "lose");
-    p.sendMessage("gameover " + win_string);
+    pipe.sendMessage("gameover " + win_string);
 }
 
-Move UPIManager::bestmove(PipeManager& p, Field& field) {
+Move UPIManager::bestmove(Field& field) {
     std::string bestmove, dummy, move;
-    p.recvMessage(bestmove);
+    pipe.recvMessage(bestmove);
     std::istringstream iss(bestmove);
     iss >> dummy >> move;
     
@@ -127,9 +127,9 @@ Move UPIManager::bestmove(PipeManager& p, Field& field) {
     Move m = upiToMove(move, field);
 
     if (m == MOVE_NONE) {
-        p.sendMessage("pfen");
+        pipe.sendMessage("pfen");
         std::string pfen;
-        p.recvMessage(pfen);
+        pipe.recvMessage(pfen);
         Log::write("Illegal move: " + move + ", pfen = " + pfen + "\n");
         Move mm = upiToMove(move, field);
     }
@@ -137,10 +137,10 @@ Move UPIManager::bestmove(PipeManager& p, Field& field) {
     return m;
 }
 
-void UPIManager::setEngineMove(PipeManager& p, Field& self, Field& enemy, OperationQueue& queue) {
-    position(p, self, enemy);
-    go(p);
-    Move move = bestmove(p, self);
+void UPIManager::setEngineMove(Field& self, Field& enemy, OperationQueue& queue) {
+    position(self, enemy);
+    go();
+    Move move = bestmove(self);
 
     if (move == MOVE_NONE) {
         return;
@@ -170,12 +170,44 @@ void UPIManager::setEngineMove(PipeManager& p, Field& self, Field& enemy, Operat
     }
 }
 
-void UPIManager::launchEngine(PipeManager& p, const Tumo* tumo) {
-    p.sendMessage("tumo " + getTumo128ToString(tumo));
-    p.sendMessage("isready");
+void UPIManager::launchEngine(const Tumo* tumo) {
+    //receive_thread = std::thread([&]() { doRecvLoop(); });
+    pipe.sendMessage("tumo " + getTumo128ToString(tumo));
+    pipe.sendMessage("isready");
     std::string r;
     do {
-        p.recvMessage(r);
+        pipe.recvMessage(r);
         deleteCRLF(r);
     } while (r != "readyok");
+}
+
+// クライアントからのメッセージを待ち受けるスレッド。
+void UPIManager::doRecvLoop() {
+    active = true;
+
+    while (active) {
+        std::string s;
+
+        if (pipe.recvMessage(s)) {
+            deleteCRLF(s);
+
+            std::stringstream ss(s);
+            std::string tmp = "";
+            ss >> tmp;
+
+            if (s == "readyok") {
+                // 何もしない
+            }
+            else if (s == "bestmove") {
+
+            }
+            else if (s == "id") {
+
+            }
+            else {
+                // 思考エンジンにエラーメッセージを送り返す
+                pipe.sendMessage("404");
+            }
+        }
+    }
 }

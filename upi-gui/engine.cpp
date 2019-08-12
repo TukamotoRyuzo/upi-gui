@@ -29,16 +29,15 @@ bool UPIEngineManager::initEngineList() {
 // engine_pathで指定された実行ファイルを起動し、「upi」コマンドを送る。
 // upiエンジンであればengine_list.csvに登録する。
 bool UPIEngineManager::addUPIEngine(HWND hwnd, std::string engine_path) {
-    PipeManager pm;
     UPIManager upi;
 
-    if (pm.executeProcess(engine_path) != 0) {
+    if (upi.pipe.executeProcess(engine_path) != 0) {
         MessageBox(hwnd, "ファイルが見つかりません。", "failed", MB_OK);
         return false;
     }
     else {
-        upi.upi(pm);
-        EngineInfo ei = upi.id(pm);
+        upi.upi();
+        EngineInfo ei = upi.id();
 
         if (ei.isNull()) {
             MessageBox(hwnd, "UPIエンジンではありません。", "failed", MB_OK);

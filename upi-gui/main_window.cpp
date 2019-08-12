@@ -266,15 +266,14 @@ void MainWindow::setHandler() {
         close(B_RESTART);
         create(B_STOP);
 
-        UPIManager upi;
         game.p1.name = "you";
         game.p2.name = "you";
 
         // AIにチェックが入っていればエンジンを起動する。
-        auto launchEngine = [&](EventID eid, PipeManager& pm) {
+        auto launchEngine = [&](EventID eid, UPIManager& upi) {
             int engine_id = SendMessage(child_window[eid].handle, CB_GETCURSEL, 0, 0);
-            pm.executeProcess(engine_manager.getUPIEngineList().at(engine_id).engine_path);            
-            upi.launchEngine(pm, game.getTumo());
+            upi.pipe.executeProcess(engine_manager.getUPIEngineList().at(engine_id).engine_path);
+            upi.launchEngine(game.getTumo());
             char buf[1000];
             SendMessage(child_window[eid].handle, CB_GETLBTEXT, engine_id, (LPARAM)buf);
             (eid == COMBO_AI1P ? game.p1 : game.p2).name = std::string(buf);
@@ -285,10 +284,10 @@ void MainWindow::setHandler() {
 
         if (!game.replay_mode) {
             if (game.p1.status & PLAYER_AI) {
-                launchEngine(COMBO_AI1P, game.p1.pipe);
+                launchEngine(COMBO_AI1P, game.p1.upi);
             }
             if (game.p2.status & PLAYER_AI) {
-                launchEngine(COMBO_AI2P, game.p2.pipe);
+                launchEngine(COMBO_AI2P, game.p2.upi);
             }
 
             game.battle_history.init(game.rule, game.p1.name, game.p2.name, game.getTumo());
@@ -431,7 +430,7 @@ void MainWindow::setHandler() {
 
     commandHandler(MENU_DEBUG_LOG) = [&](HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         if (debug_window == nullptr) {
-            debug_window = new DebugWindow(instance_handle, mainWindowHandle(), &game.p1.pipe, &game.p2.pipe);
+            debug_window = new DebugWindow(instance_handle, mainWindowHandle(), &game.p1.upi.pipe, &game.p2.upi.pipe);
 
             if (!debug_window->init()) {
                 onDestroy();

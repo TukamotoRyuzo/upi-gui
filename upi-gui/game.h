@@ -17,7 +17,7 @@ private:
         Field field;
         PlayerStatus status;
         OperationQueue operation;
-        PipeManager pipe;
+        UPIManager upi;
         std::string name;
         Player(PlayerStatus ps, Tumo* tumo, Rule* rule) 
             : max_chain(0), win(0), frame(0), field(tumo, rule), status(ps)
@@ -30,8 +30,7 @@ private:
     };
 
     Tumo tumos[TUMO_MAX];
-    TimePoint start_time, stop_time;
-    UPIManager upi;
+    TimePoint start_time, stop_time;    
     MainWindow* main_window;
     
 public:
