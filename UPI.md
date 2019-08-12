@@ -145,6 +145,7 @@
 |コマンド|意味|
 |-|-|
 |upi|upiエンジンであることを認識するためのコマンド。エンジンはこれを受け取ったら即座に`id`コマンドを返し、最後に`upiok`を返すこと。|
+|rule <br>falltime &lt;f&gt;<br>chaintime &lt;f&gt; <br>settime &lt;f&gt; <br>nexttime &lt;f&gt; <br>autodroptime &lt;f&gt;|対戦ルールを決めるためのコマンド。<br>falltime: 下ボタンを押しっぱなしにしたとき、何フレームで1マス落下するか<br>chaintime: 1連鎖につき何フレーム硬直するか<br>settime: ツモ設置時に何フレーム硬直するか<br>nexttime: ツモ設置硬直後、または連鎖終了後、またはお邪魔ぷよが振り終わった後、ネクストが操作可能になるまでに何フレーム硬直するか<br>autodroptime: 何も操作しなかった問、何フレームで1マス落下するか|
 |tumo &lt;c&gt;&lt;c&gt; &lt;c&gt;&lt;c&gt; ...| ゲームで使用されるツモを表す。&lt;c&gt;はr\|g\|b\|p\|yのいずれか。&lt;c&gt;を2つ合わせて一組とし、スペース区切りで128組送る。isreadyコマンドよりも前に送る。|
 |position &lt;pfen&gt;|盤面の状態をpfen文字列で送る。詳細はpfen文字列を参照。|
 |isready|ゲーム開始前に送る。エンジンは対局準備ができたら`readyok`を返すこと。|

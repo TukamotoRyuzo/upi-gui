@@ -266,7 +266,7 @@ void MainWindow::setHandler() {
         auto launchEngine = [&](EventID eid, UPIManager& upi) {
             int engine_id = SendMessage(child_window[eid].handle, CB_GETCURSEL, 0, 0);
             upi.pipe.executeProcess(engine_manager.getUPIEngineList().at(engine_id).engine_path);
-            upi.launchEngine(game.getTumo());
+            upi.launchEngine(game.getTumo(), game.rule);
             char buf[1000];
             SendMessage(child_window[eid].handle, CB_GETLBTEXT, engine_id, (LPARAM)buf);
             (eid == COMBO_AI1P ? game.p1 : game.p2).name = std::string(buf);

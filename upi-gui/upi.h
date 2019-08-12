@@ -19,6 +19,7 @@ public:
     // server -> client
     void upi();    
     void tumo(const Tumo* tumo);
+    void rule(Rule& r);
     void position(Field& self, Field& enemy);
     void isready();
     void go();
@@ -31,7 +32,7 @@ public:
 
     // set
     void setEngineMove(Field& self, Field& enemy, OperationQueue& queue);
-    void launchEngine(const Tumo* tumo);
+    void launchEngine(const Tumo* t, Rule& r);
 
     // レシーブスレッドの開始
     void doRecvLoop();

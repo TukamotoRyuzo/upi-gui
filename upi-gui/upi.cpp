@@ -68,6 +68,17 @@ void UPIManager::tumo(const Tumo* tumo) {
     pipe.sendMessage("tumo " + getTumo128ToString(tumo));
 }
 
+void UPIManager::rule(Rule& r) {
+    std::ostringstream ss;
+    ss << "rule"
+        << " falltime " << r.fall_time
+        << " chaintime " << r.chain_time
+        << " settime " << r.set_time
+        << " nexttime " << r.next_time
+        << " autodroptime " << r.autodrop_time;
+    pipe.sendMessage(ss.str());
+}
+
 void UPIManager::position(Field& self, Field& enemy) {
     // 相手が行動可能になるまでのフレーム数を計算する
     Field self_clone(self), enemy_clone(enemy);
@@ -168,15 +179,15 @@ void UPIManager::setEngineMove(Field& self, Field& enemy, OperationQueue& queue)
     }
 }
 
-void UPIManager::launchEngine(const Tumo* tumo) {
-    //receive_thread = std::thread([&]() { doRecvLoop(); });
-    pipe.sendMessage("tumo " + getTumo128ToString(tumo));
-    pipe.sendMessage("isready");
-    std::string r;
+void UPIManager::launchEngine(const Tumo* t, Rule& r) {
+    tumo(t);
+    rule(r);
+    isready();
+    std::string readyok;
     do {
-        pipe.recvMessage(r);
-        deleteCRLF(r);
-    } while (r != "readyok");
+        pipe.recvMessage(readyok);
+        deleteCRLF(readyok);
+    } while (readyok != "readyok");
 }
 
 // クライアントからのメッセージを待ち受けるスレッド。
