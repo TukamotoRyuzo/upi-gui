@@ -182,6 +182,9 @@
 // 配ツモを送る
 >tumo ry rb gy gb rg yy rb gg yg rg yb gr rr yy by gr bb rb yb bg rb gy gy gy yy yr yg yy rg rb bg br rr by gy rb bg gg yr yy rg rb by by gb yy bg bg rg yg rg yb yg yr yr rr br br gr gb rr yr rb gg gg bg gy bb yg gg gb yr yg yb bg br gy br rb gy rr rr yb gy by gb yy gr bb yy gb gr rr by yb gb yr yg rr gg yy yy gy by gr br rg gy yg gr yb by bg yr yr bb rr br yr gr gr yg bb yr rr gb yg gy
 
+// ルールを送る
+> rule falltime 2 chaintime 60 settime 15 nexttime 7 autodroptime 50
+
 // 対局開始前の準備
 >isready
 <readyok
