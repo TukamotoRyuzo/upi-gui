@@ -128,6 +128,7 @@
     <ClCompile Include="pipe.cpp" />
     <ClCompile Include="rule.cpp" />
     <ClCompile Include="rule_setting_window.cpp" />
+    <ClCompile Include="sound.cpp" />
     <ClCompile Include="upi.cpp" />
     <ClCompile Include="main_window.cpp" />
     <ClCompile Include="field.cpp" />
@@ -145,6 +146,7 @@
     <ClInclude Include="pipe.h" />
     <ClInclude Include="rule.h" />
     <ClInclude Include="rule_setting_window.h" />
+    <ClInclude Include="sound.h" />
     <ClInclude Include="upi.h" />
     <ClInclude Include="main_window.h" />
     <ClInclude Include="common.h" />

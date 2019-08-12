@@ -80,7 +80,6 @@ protected:
     virtual void onPaint();
     virtual void onTimer() {};
     virtual void setHandler() {};
-    virtual void onMCINotify(WPARAM, LPARAM) {};
     virtual LRESULT onCtlColorStatic(WPARAM, LPARAM) { return (LRESULT)0; };
     std::function<void(HWND, UINT, WPARAM, LPARAM)>& commandHandler(EventID event_id);
 

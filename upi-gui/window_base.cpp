@@ -106,10 +106,6 @@ LRESULT WindowBase::proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
         
         break;
 
-    case MM_MCINOTIFY:
-        onMCINotify(wParam, lParam);
-        break;
-
     case WM_CTLCOLORSTATIC:
         return onCtlColorStatic(wParam, lParam);
 

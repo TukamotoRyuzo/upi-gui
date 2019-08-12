@@ -5,6 +5,7 @@
 #include "engine.h"
 #include "degug_window.h"
 #include "rule_setting_window.h"
+#include "sound.h"
 
 enum FieldSize {
     // PLAYER1のフィールドの左上のx,y座標
@@ -50,7 +51,7 @@ public:
     void drawString(RECT* rect, TCHAR* str, UINT format);
     void rectClear(RECT* rect);
 protected:
-    bool initMCI();
+    bool initSound();
     bool initDC();
     bool initEngineList();
     bool createWindow() override;
@@ -59,7 +60,6 @@ protected:
     void onPaint() override;
     void onTimer() override;
     void setHandler() override;
-    void onMCINotify(WPARAM, LPARAM) override;
     LRESULT onCtlColorStatic(WPARAM, LPARAM) override;
 
     struct BitmapMDC {
@@ -72,7 +72,7 @@ protected:
     
     std::unordered_map<BitmapID, BitmapMDC> mdc;
 
-    MCI_OPEN_PARMS ren_voice[2][11];
+    Sound ren_voice[2][11];
     UPIEngineManager engine_manager;
     Game game;
     DebugWindow* debug_window = nullptr;

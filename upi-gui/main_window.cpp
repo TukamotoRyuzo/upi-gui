@@ -80,7 +80,7 @@ bool MainWindow::createWindow() {
 // WM_CREATE発行時(ウィンドウ生成時)に行われる処理
 bool MainWindow::onCreate() {
     // 音声ファイルの読み込み
-    if (!initMCI()) {
+    if (!initSound()) {
         return false;
     }
 
@@ -131,20 +131,14 @@ bool MainWindow::onCreate() {
 }
 
 // 音声ファイルの初期化をする。
-bool MainWindow::initMCI() {
+bool MainWindow::initSound() {
     int result;
 
     for (int p = 0; p < 2; p++) {
         for (int i = 0; i < 11; i++) {
-            char buf[100];
-            sprintf_s(buf, 100, "./voice/%dp/ren%d.mp3", p + 1, i + 1);
-            ren_voice[p][i].lpstrDeviceType = "MPEGVideo";
-            ren_voice[p][i].lpstrElementName = buf;
-            if (result = mciSendCommand(0, MCI_OPEN, MCI_OPEN_TYPE | MCI_OPEN_ELEMENT, (DWORD_PTR)& ren_voice[p][i])) {
-                char message[1000];
-                mciGetErrorString(result, message, sizeof(message));
-                MessageBox(NULL, message, buf, MB_OK);
-                PostQuitMessage(0);
+            std::wostringstream wss;
+            wss << L"./voice/" << p + 1 << L"p/ren" << i + 1 << L".mp3";           
+            if (!ren_voice[p][i].load((BSTR)wss.str().c_str())) {
                 return false;
             }
         }
@@ -200,7 +194,7 @@ bool MainWindow::initEngineList() {
 void MainWindow::onDestroy() {
     for (int p = 0; p < 2; p++) {
         for (int i = 0; i < 11; i++) {
-            mciSendCommand(ren_voice[p][i].wDeviceID, MCI_CLOSE, 0, 0);
+            ren_voice[p][i].release();
         }
     }
 
@@ -241,8 +235,7 @@ void MainWindow::onPaint() {
 
 void MainWindow::playVoice(int player, int chain) const {
     if (isChecked(CHECK_PLAY_SOUND)) {
-        auto m = mainWindowHandle();
-        mciSendCommand(ren_voice[player][chain].wDeviceID, MCI_PLAY, MCI_NOTIFY, (DWORD_PTR)&m);
+        ren_voice[player][chain].play();
     }
 }
 
@@ -468,17 +461,6 @@ void MainWindow::setHandler() {
     commandHandler(MENU_VERSION) = [&](HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         MessageBox(mainWindowHandle(), "1.0.0", "バージョン情報", MB_OK);
     };
-}
-
-void MainWindow::onMCINotify(WPARAM wParam, LPARAM lParam) {
-    if (wParam == MCI_NOTIFY_SUCCESSFUL) {
-        TimePoint start = now();
-        static std::thread th;
-        mciSendCommand(lParam, MCI_SEEK, MCI_SEEK_TO_START, 0);                
-        TimePoint end = now();
-        TimePoint elapsed = end - start;
-        std::cout << "notify: " << std::to_string(elapsed) << std::endl;
-    }
 }
 
 LRESULT MainWindow::onCtlColorStatic(WPARAM wParam, LPARAM lParam) {
