@@ -400,7 +400,7 @@ void MainWindow::setHandler() {
         ofn.nMaxFile = MAX_PATH;
         ofn.lpstrFilter = TEXT("puyofuファイル(*.puyofu)\0*.puyofu;\0")
             TEXT("すべてのファイル(*.*)\0*.*\0");
-        ofn.lpstrTitle = TEXT("思考エンジンを選択");
+        ofn.lpstrTitle = TEXT("ぷよ譜を選択");
 
         // OFN_NOCHANGEDIR: カレントディレクトリを変更しないフラグ
         // これを指定しないとファイルを選択したときにカレントディレクトリが選択したファイルの場所に変更されてしまう。
