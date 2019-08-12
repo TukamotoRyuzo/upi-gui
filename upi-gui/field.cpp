@@ -51,7 +51,7 @@ std::string Field::toPfen() const {
 void Field::init() {
     this->all_clear = false;
     this->chain = 0;    
-    this->fase = GameFase::NEXT;
+    this->fase = GameFase::START;
     this->Dcnt = 0;
     this->Lcnt = 0;
     this->Lrocnt = 0;
@@ -420,9 +420,14 @@ void Field::update(Field& enemy, OperationBit key_operation) {
     }
 
     switch (fase) {
-        // ツモ出現待ち状態
-    case NEXT:
+    case START:
+        wait_timer = rule->next_time;
         reload();
+        fase = NEXT;
+        break;
+
+        // ツモ出現待ち状態
+    case NEXT:        
         fase = OPERATION;
         break;
 
@@ -506,7 +511,6 @@ void Field::update(Field& enemy, OperationBit key_operation) {
         ojamabuf += std::min(30, ojama[0]);
         ojama[0] -= std::min(30, ojama[0]);
         fase = OJAMA_FALLING;
-        wait_timer = rule->next_time;
         break;
 
     case OJAMA_FALLING:
@@ -523,8 +527,8 @@ void Field::update(Field& enemy, OperationBit key_operation) {
                 for (int x = 1; x <= 6; x++) {
                     field[x][14] = EMPTY;
                 }
-
-                fase = NEXT;
+                
+                fase = START;
             }
         }
 

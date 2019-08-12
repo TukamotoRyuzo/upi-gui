@@ -130,7 +130,7 @@ Move UPIManager::bestmove(Field& field) {
         pipe.sendMessage("pfen");
         std::string pfen;
         pipe.recvMessage(pfen);
-        Log::write("Illegal move: " + move + ", pfen = " + pfen + "\n");
+        Log::write("Illegal move: " + move + ", pfen = " + pfen + "\r\n");
         Move mm = upiToMove(move, field);
     }
 
@@ -138,8 +138,6 @@ Move UPIManager::bestmove(Field& field) {
 }
 
 void UPIManager::setEngineMove(Field& self, Field& enemy, OperationQueue& queue) {
-    position(self, enemy);
-    go();
     Move move = bestmove(self);
 
     if (move == MOVE_NONE) {

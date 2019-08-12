@@ -242,7 +242,7 @@ void MainWindow::onPaint() {
 void MainWindow::playVoice(int player, int chain) const {
     if (isChecked(CHECK_PLAY_SOUND)) {
         auto m = mainWindowHandle();
-        mciSendCommand(ren_voice[player][chain].wDeviceID, MCI_PLAY, MCI_NOTIFY, (DWORD_PTR)& m);
+        mciSendCommand(ren_voice[player][chain].wDeviceID, MCI_PLAY, MCI_NOTIFY, (DWORD_PTR)&m);
     }
 }
 
@@ -472,7 +472,12 @@ void MainWindow::setHandler() {
 
 void MainWindow::onMCINotify(WPARAM wParam, LPARAM lParam) {
     if (wParam == MCI_NOTIFY_SUCCESSFUL) {
-        mciSendCommand(lParam, MCI_SEEK, MCI_SEEK_TO_START, 0);
+        TimePoint start = now();
+        static std::thread th;
+        mciSendCommand(lParam, MCI_SEEK, MCI_SEEK_TO_START, 0);                
+        TimePoint end = now();
+        TimePoint elapsed = end - start;
+        std::cout << "notify: " << std::to_string(elapsed) << std::endl;
     }
 }
 

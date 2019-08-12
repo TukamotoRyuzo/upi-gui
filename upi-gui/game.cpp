@@ -67,6 +67,7 @@ void Game::onFase(GameFase bf, GameFase gf, Player& player, int chain) {
 
         p1_win ? p1.win++ : p2.win++;
 
+        // ぷよ譜を保存
         if (!replay_mode) {
             std::string replay_file_name = "";
             replay_file_name += battle_history.player_1p_name + "_vs_" + battle_history.player_2p_name + "_" + timeStamp() + ".puyofu";
@@ -78,7 +79,23 @@ void Game::onFase(GameFase bf, GameFase gf, Player& player, int chain) {
     }
 
     // engineに考えさせる
-    else if (bf == NEXT) {
+    else if (bf == START) {
+        if (!replay_mode) {
+            if (player.status & PLAYER_AI) {
+                if (player.status & PLAYER1) {
+                    p1.upi.position(p1.field, p2.field);
+                    p1.upi.go();
+                }
+                else {
+                    p2.upi.position(p2.field, p1.field);
+                    p2.upi.go();
+                }
+            }
+        }
+    }
+
+    // engineの思考結果を受け取る
+    else if (bf == NEXT && gf == OPERATION) {
         if (!replay_mode) {
             if (player.status & PLAYER_AI) {
                 if (player.status & PLAYER1) {
