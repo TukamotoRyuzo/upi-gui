@@ -99,10 +99,14 @@ void Game::onFase(GameFase bf, GameFase gf, Player& player, int chain) {
         if (!replay_mode) {
             if (player.status & PLAYER_AI) {
                 if (player.status & PLAYER1) {
-                    p1.upi.setEngineMove(p1.field, p2.field, p1.operation);
+                    if (!p1.upi.setEngineMove(p1.field, p2.field, p1.operation)) {
+                        // TODO: エンジンの指し手が非合法手だった時の動作
+                    }
                 }
                 else {
-                    p2.upi.setEngineMove(p2.field, p1.field, p2.operation);
+                    if (!p2.upi.setEngineMove(p2.field, p1.field, p2.operation)) {
+
+                    }
                 }
             }
         }

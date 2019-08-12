@@ -25,13 +25,14 @@ public:
     void go();
     void quit();
     void gameover(bool win);
+    void illegalmove(Move move);
 
     // client -> server
     EngineInfo id();
     Move bestmove(Field& field);
 
     // set
-    void setEngineMove(Field& self, Field& enemy, OperationQueue& queue);
+    bool setEngineMove(Field& self, Field& enemy, OperationQueue& queue);
     void launchEngine(const Tumo* t, Rule& r);
 
     // レシーブスレッドの開始

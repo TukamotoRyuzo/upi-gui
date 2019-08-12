@@ -149,7 +149,8 @@
 |tumo &lt;c&gt;&lt;c&gt; &lt;c&gt;&lt;c&gt; ...| ゲームで使用されるツモを表す。&lt;c&gt;はr\|g\|b\|p\|yのいずれか。&lt;c&gt;を2つ合わせて一組とし、スペース区切りで128組送る。isreadyコマンドよりも前に送る。|
 |position &lt;pfen&gt;|盤面の状態をpfen文字列で送る。詳細はpfen文字列を参照。|
 |isready|ゲーム開始前に送る。エンジンは対局準備ができたら`readyok`を返すこと。|
-|go &lt;millisecond&gt;|思考開始の合図。エンジンはこのコマンドを受信したら、millisecondで指定したミリ秒以内に`bestmove`コマンドを返すこと。ちょっとでも過ぎると負け。|
+|go [&lt;millisecond&gt;]|思考開始の合図。エンジンはこのコマンドを受信したら、`bestmove`コマンドを返すこと。millisecondが指定されていた場合は、指定したミリ秒以内に`bestmove`コマンドを返さなかった場合、もう一度goコマンドが送られる。その間のツモ操作は行われない。|
+|illegalmove &lt;move&gt;|`bestmove`により送られてきた指し手が非合法手だった場合に送り返されるコマンド。この後すぐにgoコマンドが送られるので、もう一度`bestmove`を返すこと。|
 |quit|アプリケーション終了を命令するコマンド。|
 |gameover &lt;win\|lose&gt;|ゲーム終了を表すコマンド。|
 
@@ -160,7 +161,7 @@
 |id name &lt;program name&gt;<br>id author &lt;program name&gt;|upiコマンドを受信したときに最初に送り返すコマンド。id nameでプログラム名を返し、id authorで作者名を返す。|
 |upiok|upiコマンドを受信したときに最後に送り返すコマンド。これを送らないとupiエンジンと認識されない。|
 |readyok|isreadyコマンドを受信したときに送り返すコマンド。重い処理を行う場合はこのコマンドを送り返す前に行う。|
-|bestmove &lt;move&gt;|goコマンドを受信したときに送り返すコマンド。エンジンの指し手を返す。|
+|bestmove &lt;move&gt;|goコマンドを受信したときに送り返すコマンド。エンジンの指し手を返す。もし非合法手だった場合、`illegalmove`コマンドを返す。|
 
 ### 通信の例
 

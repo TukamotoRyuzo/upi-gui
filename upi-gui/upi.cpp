@@ -124,6 +124,10 @@ void UPIManager::gameover(bool win) {
     pipe.sendMessage("gameover " + win_string);
 }
 
+void UPIManager::illegalmove(Move move) {
+    pipe.sendMessage("illegalmove " + toUPI(move));
+}
+
 Move UPIManager::bestmove(Field& field) {
     std::string bestmove, dummy, move;
     pipe.recvMessage(bestmove);
@@ -135,28 +139,19 @@ Move UPIManager::bestmove(Field& field) {
     }
 
     deleteCRLF(move);
-    Move m = upiToMove(move, field);
-
-    if (m == MOVE_NONE) {
-        pipe.sendMessage("pfen");
-        std::string pfen;
-        pipe.recvMessage(pfen);
-        Log::write("Illegal move: " + move + ", pfen = " + pfen + "\r\n");
-        Move mm = upiToMove(move, field);
-    }
-
-    return m;
+    return upiToMove(move, field);
 }
 
-void UPIManager::setEngineMove(Field& self, Field& enemy, OperationQueue& queue) {
+bool UPIManager::setEngineMove(Field& self, Field& enemy, OperationQueue& queue) {
     Move move = bestmove(self);
 
     if (move == MOVE_NONE) {
-        return;
+        illegalmove(move);
+        return false;
     }
 
     queue.moveToOperation(move, self);
-
+#ifdef _DEBUG
     Field self_clone(self), enemy_clone(enemy);
 
     // ç°Ç±ÇÃèÍÇ≈ÇªÇÃëÄçÏí ÇËÇ…Ç®Ç¢ÇƒÇ›ÇƒÅAÇ®ÇØÇ»Ç©Ç¡ÇΩÇÁÇ‚ÇŒÇ¢
@@ -177,6 +172,9 @@ void UPIManager::setEngineMove(Field& self, Field& enemy, OperationQueue& queue)
             << fileOf(csq(move)) << " " << rankOf(csq(move)) << std::endl;
         Log::write(ss.str());
     }
+#endif
+
+    return true;
 }
 
 void UPIManager::launchEngine(const Tumo* t, Rule& r) {
