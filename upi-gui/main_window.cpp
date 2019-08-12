@@ -101,15 +101,23 @@ bool MainWindow::onCreate() {
     game.show();
     initEngineList();
 
+    
     // 前回の入力状態を再現する
     Rule& r = game.rule;
 
-    if (r.ai_1p) {
-        commandHandler(CHECK_AI1P)(main_window_handle, WM_COMMAND, 0, 0);
+    if (engine_manager.getUPIEngineList().empty()) {
+        disable(CHECK_AI1P);
+        disable(CHECK_AI2P);
     }
-    if (r.ai_2p) {
-        commandHandler(CHECK_AI2P)(main_window_handle, WM_COMMAND, 0, 0);
+    else {
+        if (r.ai_1p) {
+            commandHandler(CHECK_AI1P)(main_window_handle, WM_COMMAND, 0, 0);
+        }
+        if (r.ai_2p) {
+            commandHandler(CHECK_AI2P)(main_window_handle, WM_COMMAND, 0, 0);
+        }
     }
+
     if (r.continuous) {
         commandHandler(CHECK_CONTINUE_BATTLE)(main_window_handle, WM_COMMAND, 0, 0);
     }
@@ -186,6 +194,20 @@ bool MainWindow::initEngineList() {
     SendMessage(child_window[COMBO_AI1P].handle, CB_SETCURSEL, 0, 0);
     SendMessage(child_window[COMBO_AI2P].handle, CB_SETCURSEL, 0, 0);
 
+    // もしエンジンがあればチェックボックス有効
+    if (engine_manager.getUPIEngineList().size()) {
+        enable(CHECK_AI1P);
+        enable(CHECK_AI2P);
+    }
+    else {
+        uncheck(CHECK_AI1P);
+        uncheck(CHECK_AI2P);
+        disable(CHECK_AI1P);
+        disable(CHECK_AI2P);
+        game.p1.status &= ~PLAYER_AI;
+        game.p2.status &= ~PLAYER_AI;
+    }
+
     // あれ、falseなくない
     return true;
 }
@@ -216,11 +238,15 @@ void MainWindow::onDestroy() {
     game.rule.voice = isChecked(CHECK_PLAY_SOUND);
     char buf[1000];
     int index = SendMessage(child_window[COMBO_AI1P].handle, CB_GETCURSEL, 0, 0);
-    SendMessage(child_window[COMBO_AI1P].handle, CB_GETLBTEXT, index, (LPARAM)buf);
-    game.rule.engine_name_1p = std::string(buf);
+    if (index != -1) {
+        SendMessage(child_window[COMBO_AI1P].handle, CB_GETLBTEXT, index, (LPARAM)buf);
+        game.rule.engine_name_1p = std::string(buf);
+    }    
     index = SendMessage(child_window[COMBO_AI2P].handle, CB_GETCURSEL, 0, 0);
-    SendMessage(child_window[COMBO_AI2P].handle, CB_GETLBTEXT, index, (LPARAM)buf);
-    game.rule.engine_name_2p = std::string(buf);
+    if (index != -1) {
+        SendMessage(child_window[COMBO_AI2P].handle, CB_GETLBTEXT, index, (LPARAM)buf);
+        game.rule.engine_name_2p = std::string(buf);
+    }
     game.rule.save();
     WindowBase::onDestroy();
 }
