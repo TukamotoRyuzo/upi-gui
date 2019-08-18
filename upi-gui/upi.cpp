@@ -150,7 +150,7 @@ bool UPIManager::setEngineMove(Field& self, Field& enemy, OperationQueue& queue)
         return false;
     }
 
-    queue.moveToOperation(move, self);
+    queue.moveToOperationSoft(move, self);
 #ifdef _DEBUG
     Field self_clone(self), enemy_clone(enemy);
 

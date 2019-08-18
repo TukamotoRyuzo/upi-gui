@@ -73,6 +73,7 @@ struct OperationQueue {
     }
 
     void moveToOperation(Move m, const Field& f);
+    void moveToOperationSoft(Move m, const Field& f);
     size_t size() const { return queue.size(); }
     void clear() { queue.clear(); }
 private:

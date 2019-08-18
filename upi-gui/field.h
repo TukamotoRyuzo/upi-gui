@@ -202,4 +202,5 @@ public:
     int getConformedOjama() const { return ojama[0]; }
     int getUnconformedOjama() const { return ojama[1]; }
     std::string toPfen() const;
+    const Rule* getRule() const { return rule; }
 };

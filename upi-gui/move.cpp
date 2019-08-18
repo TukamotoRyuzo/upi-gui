@@ -336,3 +336,156 @@ void OperationQueue::moveToOperation(Move m, const Field& f) {
         }
     }
 }
+
+// 最速の操作にしないバージョン。
+void OperationQueue::moveToOperationSoft(Move m, const Field& f) {
+    queue.clear();
+
+    // 必要な横移動と下移動、回転数
+    int x = fileOf(psq(m)) + 1;
+    int y = rankOf(psq(m)) + 1;
+    int cx = fileOf(csq(m)) + 1;
+    int cy = rankOf(csq(m)) + 1;
+    int r = 0;
+    if (x == cx) {
+        if (y == cy + 1) {
+            r = 2;
+        }
+        else {
+            r = 0;
+        }
+    }
+    else {
+        if (x == cx + 1) {
+            r = 3;
+        }
+        else {
+            r = 1;
+        }
+    }
+
+    int n = 0;
+    int necX = x - 3;
+    int necY = 12 - (y > y + posi[r][1] ? y : y + posi[r][1]);
+    int necR = r;
+
+    if (necY < 0) {
+        necY = 0;
+    }
+
+    for (int i = 0; i < 40 * f.getRule()->fall_time; i++) {
+        queue.push_back(NO_OPERATION);
+    }
+
+    // 右移動
+    if (necX > 0) {
+        if (necR == 3) {            
+            queue[0] |= OPE_L_ROTATE;
+        }
+
+        else if (necR == 2) {            
+            if (necX == 3) {
+                if (necY == 0) {
+                    queue[4] |= OPE_L_ROTATE;
+                    queue[6] |= OPE_L_ROTATE;
+                }
+                else {
+                    queue[0] |= OPE_L_ROTATE;
+                    queue[2] |= OPE_L_ROTATE;
+                }
+            }
+            else {
+                queue[0] |= OPE_L_ROTATE;
+                queue[2] |= OPE_L_ROTATE;
+            }
+        }
+
+        else if (necR == 1) {
+            queue[0] |= OPE_R_ROTATE;
+        }
+    }
+
+    // 左移動
+    else if (necX < 0) {        
+        if (necR == 3) {
+            queue[0] |= OPE_L_ROTATE;
+        }
+
+        // 左移動時は左回転のほうが安全
+        else if (necR == 2) {            
+            if (necX == -2) {
+                queue[0] |= OPE_R_ROTATE;
+                queue[2] |= OPE_R_ROTATE;
+            }
+            else {
+                queue[0] |= OPE_R_ROTATE;
+                queue[2] |= OPE_R_ROTATE;
+            }
+        }
+
+        else if (necR == 1) {
+            queue[0] |= OPE_R_ROTATE;
+        }
+    }
+
+    // 3列目におく場合
+    else {
+        if (necR == 3) {
+            queue[0] |= OPE_L_ROTATE;
+        }
+
+        else if (necR == 2) {
+            // 左右が詰まっている場合は、2回転は1回転ですむ
+            if (!f.isEmpty(4, 12) && !f.isEmpty(2, 12)) {
+                queue[0] |= OPE_R_ROTATE;
+            }
+
+            else if (!f.isEmpty(4, 12) && f.isEmpty(2, 12)) {
+                queue[0] |= OPE_L_ROTATE;
+                queue[2] |= OPE_L_ROTATE;               
+            }
+            else if (!f.isEmpty(2, 12) && f.isEmpty(4, 12)) {
+                queue[0] |= OPE_R_ROTATE;
+                queue[2] |= OPE_R_ROTATE;
+            }
+            else if (!f.isEmpty(4, 10) || !f.isEmpty(2, 10)) {
+                queue[0] |= OPE_L_ROTATE;
+                queue[2] |= OPE_L_ROTATE;
+            }
+            else {
+                queue[0] |= OPE_L_ROTATE;
+                queue[2] |= OPE_L_ROTATE;
+            }
+        }
+
+        else if (necR == 1) {
+            queue[0] |= OPE_R_ROTATE;
+        }
+    }
+
+    // 横移動
+    while (necX) {
+        if (necX < 0) {
+            // 左方向の移動
+            queue[n++] |= OPE_LEFT;
+            n++;// 連続する移動は受け付けられないので
+            necX++;
+        }
+        else {
+            queue[n++] |= OPE_RIGHT;
+            n++;
+            necX--;
+        }
+    }
+
+    // 最後の操作以降はすべて下ボタンを押しっぱなしにする
+    int i;
+    for (i = std::max(int(queue.size() - 1), 0); i > 0; i--) {
+        if (queue[i]) {
+            break;
+        }
+    }
+    for (; i < queue.size(); i++) {
+        queue[i] |= OPE_DOWN;
+    }
+}
