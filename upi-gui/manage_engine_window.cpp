@@ -71,7 +71,7 @@ void ManageEngineWindow::setHandler() {
         ofn.lpstrInitialDir = NULL; // 初期フォルダ位置
         ofn.lpstrFile = szFile;       // 選択ファイル格納
         ofn.nMaxFile = MAX_PATH;
-        ofn.lpstrFilter = TEXT("exeファイル(*.exe)\0*.exe;\0")
+        ofn.lpstrFilter = TEXT("実行ファイル(*.exe,*.bat)\0*.exe;*.bat\0")
             TEXT("すべてのファイル(*.*)\0*.*\0");
         ofn.lpstrTitle = TEXT("思考エンジンを選択");
 
