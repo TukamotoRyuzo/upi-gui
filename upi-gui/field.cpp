@@ -155,7 +155,7 @@ bool Field::vanish() {
 
             else if ((count = countConnection(dammy, x, y)) >= 4) {
                 delete_count += count;
-                connect += connect_b[count % 8];
+                connect += connect_b[std::min(count, 11)];
                 color_bit |= 1 << color(x, y);
                 deletePuyo(dammy, x, y);
             }
