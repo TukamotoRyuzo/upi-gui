@@ -480,12 +480,13 @@ void OperationQueue::moveToOperationSoft(Move m, const Field& f) {
 
     // ÅŒã‚Ì‘€ìˆÈ~‚Í‚·‚×‚Ä‰ºƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚Á‚Ï‚È‚µ‚É‚·‚é
     int i;
-    for (i = std::max(int(queue.size() - 1), 0); i > 0; i--) {
+    for (i = std::max(int(queue.size() - 1), 0); i >= 0; i--) {
         if (queue[i]) {
+            i++;
             break;
         }
     }
-    for (; i < queue.size(); i++) {
+    for (i = std::max(0, i); i < queue.size(); i++) {
         queue[i] |= OPE_DOWN;
     }
 }

@@ -228,7 +228,7 @@ void Field::putOjama() {
 
         for (int x = 0; x < 6; x++) {
             Tumo t = getTumo(ojama_rand_count);
-            int r = (t.color[0] + t.color[1]) % 6;
+            int r = ((t.color[0] - 1) + (t.color[1] - 1)) % 6;
             std::swap(v[x], v[r]);
             ojama_rand_count = (ojama_rand_count + 1) % 128;
         }
@@ -429,13 +429,14 @@ void Field::update(Field& enemy, OperationBit key_operation) {
         // ツモ出現待ち状態
     case NEXT:
         fase = OPERATION;
+        operation_timer = 0;
         break;
 
         // ツモ操作可能状態
     case OPERATION:
         if (operateTumo(key_operation)) {
             // これによりdrop()が呼ばれる
-            operation_timer = 0;
+            operation_timer = -1;
 
             // 落下ボーナス
             score++;
@@ -443,7 +444,7 @@ void Field::update(Field& enemy, OperationBit key_operation) {
         }
 
         // 自由落下
-        if (operation_timer++ % rule->autodrop_time == 0 && !drop()) {
+        if (++operation_timer % rule->autodrop_time == 0 && !drop()) {
             fase = CHECK_SLIDE;
             Rrocnt = Lrocnt = Dcnt = Rcnt = Lcnt = 0;
             wait_timer = !Field(*this).slide() ? 0 : rule->set_time;
@@ -453,7 +454,7 @@ void Field::update(Field& enemy, OperationBit key_operation) {
 
     case CHECK_SLIDE:
         if (slide()) {
-            wait_timer = 1;
+            wait_timer = rule->fall_time - 1;
         }
         else {
             wait_timer = rule->set_time;
@@ -503,7 +504,7 @@ void Field::update(Field& enemy, OperationBit key_operation) {
     case CHAIN_VOICE: {
         int slide_frame = slideFrame();
         fase = CHECK_SLIDE;
-        wait_timer = (chain == 1 && slide_frame == 0) ? 0 : rule->chain_time - slide_frame * 2;
+        wait_timer = (chain == 1 && slide_frame == 0) ? 0 : rule->chain_time - slide_frame * rule->fall_time;
         break;
     }
     case OJAMA_WAIT:

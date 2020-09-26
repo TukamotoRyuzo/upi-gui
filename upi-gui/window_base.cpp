@@ -94,6 +94,10 @@ std::function<void(HWND, UINT, WPARAM, LPARAM)>& WindowBase::commandHandler(Even
     return child_window.at(event_id).command_handler;
 }
 
+std::function<void(HWND, UINT, WPARAM, LPARAM)> WindowBase::emptyHandler() {
+    return [](HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {};
+}
+
 // ウィンドウプロシージャ
 LRESULT WindowBase::proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {

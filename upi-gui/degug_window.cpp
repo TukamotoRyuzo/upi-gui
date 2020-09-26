@@ -109,11 +109,6 @@ void DebugWindow::setHandler() {
         Log::deleteLog();
     };
 
-    commandHandler(EDIT_DEBUG_LOG) = [&](HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-
-    };
-
-    commandHandler(EDIT_SEND_COMMAND) = [&](HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-
-    };
+    commandHandler(EDIT_DEBUG_LOG) = emptyHandler();
+    commandHandler(EDIT_SEND_COMMAND) = emptyHandler();
 }

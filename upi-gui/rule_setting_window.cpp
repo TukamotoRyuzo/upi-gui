@@ -101,21 +101,11 @@ bool RuleSettingWindow::onCreate() {
 }
 
 void RuleSettingWindow::setHandler() {
-    commandHandler(EDIT_FALL_FREQ) = [&](HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-
-    };
-    commandHandler(EDIT_CHAIN_WAIT_FRAME) = [&](HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-
-    };
-    commandHandler(EDIT_SET_FRAME) = [&](HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-
-    };
-    commandHandler(EDIT_NEXT_FRAME) = [&](HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-
-    };
-    commandHandler(EDIT_AUTODROP_FRAME) = [&](HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-
-    };
+    commandHandler(EDIT_FALL_FREQ) = emptyHandler();
+    commandHandler(EDIT_CHAIN_WAIT_FRAME) = emptyHandler();
+    commandHandler(EDIT_SET_FRAME) = emptyHandler();
+    commandHandler(EDIT_NEXT_FRAME) = emptyHandler();
+    commandHandler(EDIT_AUTODROP_FRAME) = emptyHandler();
     commandHandler(B_SAVE_PARAMS) = [&](HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
         auto get_int = [&](EventID eid) {

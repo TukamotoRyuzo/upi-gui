@@ -1,5 +1,4 @@
 #include "common.h"
-#include <windows.h>
 #include <sstream>
 
 namespace Log {

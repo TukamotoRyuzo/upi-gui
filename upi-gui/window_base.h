@@ -82,6 +82,7 @@ protected:
     virtual void setHandler() {};
     virtual LRESULT onCtlColorStatic(WPARAM, LPARAM) { return (LRESULT)0; };
     std::function<void(HWND, UINT, WPARAM, LPARAM)>& commandHandler(EventID event_id);
+    std::function<void(HWND, UINT, WPARAM, LPARAM)> emptyHandler();
 
     HINSTANCE instance_handle;
     HWND main_window_handle;
