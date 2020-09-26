@@ -46,7 +46,7 @@ inline std::string toUPI(Move m) {
     std::stringstream ss;
     std::string rank_string = "abcdefghijklm";
     ss << fileOf(psq(m)) + 1 << rank_string[rankOf(psq(m))]
-       << fileOf(csq(m)) + 1 << rank_string[rankOf(csq(m))];
+        << fileOf(csq(m)) + 1 << rank_string[rankOf(csq(m))];
     return ss.str();
 }
 

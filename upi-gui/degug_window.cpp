@@ -1,7 +1,7 @@
 #include "degug_window.h"
 #include "common.h"
 
-DebugWindow::DebugWindow(HINSTANCE hInst, HWND hWnd, PipeManager* p1, PipeManager* p2) : 
+DebugWindow::DebugWindow(HINSTANCE hInst, HWND hWnd, PipeManager* p1, PipeManager* p2) :
     WindowBase(hInst, "デバッグログ"),
     parent_window_handle(hWnd),
     pipe1(p1),
@@ -52,7 +52,7 @@ bool DebugWindow::createWindow() {
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT, r.right - r.left, r.bottom - r.top,
         NULL, NULL, instance_handle, NULL);
-    
+
     return main_window_handle != NULL;
 }
 
@@ -110,7 +110,7 @@ void DebugWindow::setHandler() {
     };
 
     commandHandler(EDIT_DEBUG_LOG) = [&](HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-        
+
     };
 
     commandHandler(EDIT_SEND_COMMAND) = [&](HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {

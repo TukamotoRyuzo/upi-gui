@@ -4,18 +4,18 @@
 #include <exception>
 #include <stdexcept>
 
-RuleSettingWindow::RuleSettingWindow(HINSTANCE hInst, Rule* r) : 
-    WindowBase(hInst, TEXT("ルール設定")), 
+RuleSettingWindow::RuleSettingWindow(HINSTANCE hInst, Rule* r) :
+    WindowBase(hInst, TEXT("ルール設定")),
     rule(r) {
     const DWORD style_edit = WS_VISIBLE | WS_CHILD | WS_BORDER | ES_LEFT | ES_AUTOHSCROLL;
     const DWORD style_button = WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON;
     const DWORD style_static = WS_CHILD | WS_VISIBLE | SS_LEFT;
 
     const int start_edit_x = 170;
-    const int start_static_x = 20;    
+    const int start_static_x = 20;
     const int height = 25;
     const int static_width = 140;
-    
+
     child_window[STATIC_FALL_FREQ] = ChildWindow(TEXT("STATIC"), TEXT("落下速度"), style_static, start_static_x, 20, static_width, height);
     child_window[STATIC_CHAIN_WAIT_FRAME] = ChildWindow(TEXT("STATIC"), TEXT("連鎖時間"), style_static, start_static_x, 50, static_width, height);
     child_window[STATIC_SET_FRAME] = ChildWindow(TEXT("STATIC"), TEXT("設置時間"), style_static, start_static_x, 80, static_width, height);
@@ -29,7 +29,7 @@ RuleSettingWindow::RuleSettingWindow(HINSTANCE hInst, Rule* r) :
     child_window[EDIT_AUTODROP_FRAME] = ChildWindow(TEXT("edit"), NULL, style_edit, start_edit_x, 140, 60, height);
     child_window[B_SAVE_PARAMS] = ChildWindow(TEXT("button"), TEXT("保存"), style_button, 410, 180, 60, height);
     child_window[B_RETURN_DEFAULT_VALUE] = ChildWindow(TEXT("button"), TEXT("デフォルト値に戻す"), style_button, 230, 180, 160, height);
-    
+
     for (EventID e = UPDOWN_FALL_FREQ; e <= UPDOWN_AUTODROP_FRAME; e = EventID(e + 1)) {
         child_window[e] = ChildWindow();
     }
@@ -118,7 +118,7 @@ void RuleSettingWindow::setHandler() {
     };
     commandHandler(B_SAVE_PARAMS) = [&](HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
-        auto get_int = [&](EventID eid) {            
+        auto get_int = [&](EventID eid) {
             char buf[1024];
 
             // エディットコントロールから通知を読み込む。

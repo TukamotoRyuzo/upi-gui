@@ -29,7 +29,7 @@ void WindowBase::createUpDown(EventID event_id, EventID bady, int upper, int low
     ChildWindow& w = child_window.at(event_id);
     w.handle = CreateUpDownControl(WS_CHILD | WS_VISIBLE | WS_BORDER | UDS_ALIGNRIGHT | UDS_SETBUDDYINT,
         0, 0, 0, 0, main_window_handle, event_id, instance_handle, child_window.at(bady).handle,
-        upper, lower, now); 
+        upper, lower, now);
 }
 
 // event_idÇ…ëŒâûÇ∑ÇÈwindowÇï¬Ç∂ÇÈÅB
@@ -103,7 +103,7 @@ LRESULT WindowBase::proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
         if (!onCreate()) {
             return false;
         }
-        
+
         break;
 
     case WM_CTLCOLORSTATIC:

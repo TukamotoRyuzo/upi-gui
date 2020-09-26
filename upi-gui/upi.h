@@ -12,12 +12,12 @@ class UPIManager {
     static const int TUMO_MAX = 128;
     std::string getTumo128ToString(const Tumo* tumo) const;
     std::thread receive_thread;
-    std::atomic_bool active;    
+    std::atomic_bool active;
 public:
     PipeManager pipe;
 
     // server -> client
-    void upi();    
+    void upi();
     void tumo(const Tumo* tumo);
     void rule(Rule& r);
     void position(Field& self, Field& enemy);

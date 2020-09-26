@@ -1,6 +1,6 @@
 #include "manage_engine_window.h"
 
-ManageEngineWindow::ManageEngineWindow(HINSTANCE hInst, UPIEngineManager* e) 
+ManageEngineWindow::ManageEngineWindow(HINSTANCE hInst, UPIEngineManager* e)
     : WindowBase(hInst, TEXT("ÉGÉìÉWÉìä«óù")), engine_manager(e) {
     const DWORD style_button = WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON;
     const DWORD style_listbox = WS_CHILD | WS_VISIBLE | LBS_STANDARD;

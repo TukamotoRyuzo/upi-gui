@@ -17,7 +17,7 @@ inline Color randomColor(Color except_color = EMPTY) {
 }
 
 inline char colorToString(Color c) {
-    return "  rgbpyo"[c];        
+    return "  rgbpyo"[c];
 }
 
 class Field;

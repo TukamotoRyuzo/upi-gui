@@ -61,7 +61,7 @@ int PipeManager::executeProcess(std::string engine_name) {
         if (si.hStdOutput == INVALID_HANDLE_VALUE) {
             throw std::string("GetStdHandle(STD_ERROR_HANDLE)");
         }
-        
+
         if (si.hStdError == INVALID_HANDLE_VALUE) {
             throw std::string("GetStdHandle(STD_ERROR_HANDLE)");
         }
@@ -94,8 +94,8 @@ int PipeManager::executeProcess(std::string engine_name) {
 
 // パイプへの書き込み(子プロセスへの送信）
 int PipeManager::sendMessage(std::string message) {
-    DWORD numberOfBytesWritten;    
-    message += "\r\n";    
+    DWORD numberOfBytesWritten;
+    message += "\r\n";
     Log::write(">> " + message);
 
     if (!WriteFile(self_to_child_pipe_write, (LPSTR)message.c_str(), message.length(), &numberOfBytesWritten, NULL)) {
@@ -107,10 +107,10 @@ int PipeManager::sendMessage(std::string message) {
 }
 
 // パイプの読み込み(子プロセスからの受信)
-int PipeManager::recvMessage(std::string &message) {
+int PipeManager::recvMessage(std::string& message) {
     DWORD numberOfBytesRead;
     char buf[256];
-    
+
     if (!ReadFile(child_to_self_pipe_read, buf, sizeof(buf) - 1, &numberOfBytesRead, NULL)) {
         if (GetLastError() == ERROR_BROKEN_PIPE) {
             printf("pipe end\n");
@@ -134,7 +134,7 @@ int PipeManager::closeProcess() {
             }
         }
     };
-    
+
     int ret = 0;
 
     try {

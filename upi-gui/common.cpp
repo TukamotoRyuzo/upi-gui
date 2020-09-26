@@ -10,7 +10,7 @@ namespace Log {
     HWND debug_edit_control = NULL;
 
     void Log::start() {
-        log.open("upi.log");        
+        log.open("upi.log");
     }
 
     void write(std::string str) {
@@ -26,7 +26,7 @@ namespace Log {
 
     void deleteLog() {
         log_memory.str("");
-        log_memory.clear(std::stringstream::goodbit);        
+        log_memory.clear(std::stringstream::goodbit);
 
         if (debug_edit_control != NULL) {
             SetWindowText(debug_edit_control, log_memory.str().c_str());

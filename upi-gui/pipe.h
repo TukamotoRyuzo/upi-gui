@@ -4,7 +4,7 @@
 #include <string>
 #include <fstream>
 
-class PipeManager {    
+class PipeManager {
     HANDLE child_process = INVALID_HANDLE_VALUE;
     HANDLE child_error_write = INVALID_HANDLE_VALUE;
     HANDLE self_to_child_pipe_write = INVALID_HANDLE_VALUE;

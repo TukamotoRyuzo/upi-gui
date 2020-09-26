@@ -38,7 +38,7 @@ bool BattleHistory::load(std::string filename) {
 
     clear();
     std::stringstream tumo_ss(line);
-    
+
     while (!tumo_ss.eof()) {
         int p, c;
         tumo_ss >> p >> c;

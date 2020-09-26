@@ -9,7 +9,7 @@
 #pragma comment(lib, "comctl32.lib")
 #pragma comment(lib, "winmm.lib")
 
-enum EventID {    
+enum EventID {
     B_START, B_STOP, B_RESTART,
     B_ADD_ENGINE, B_DELETE_ENGINE,
     B_SEND_MESSAGE_TO_ENGINE1, B_SEND_MESSAGE_TO_ENGINE2, B_DELETE_LOG,
@@ -61,7 +61,7 @@ public:
     WindowBase(HINSTANCE hinst, LPSTR class_name);
     ~WindowBase();
     void doMessageLoop();
-    bool init();        
+    bool init();
     HWND mainWindowHandle() const { return main_window_handle; }
 protected:
     void create(EventID event_id);
@@ -76,7 +76,7 @@ protected:
     LRESULT proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
     virtual bool createWindow() = 0;
     virtual bool onCreate() = 0;
-    virtual void onDestroy();    
+    virtual void onDestroy();
     virtual void onPaint();
     virtual void onTimer() {};
     virtual void setHandler() {};

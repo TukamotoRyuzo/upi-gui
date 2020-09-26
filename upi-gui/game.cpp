@@ -17,7 +17,7 @@ void Game::initTumo() {
 void Game::init() {
     p1.init();
     p2.init();
-    
+
     // リプレイ情報の初期化
     if (!replay_mode) {
         initTumo();
@@ -42,6 +42,10 @@ void Game::restart() {
 }
 
 void Game::update() {
+    if (GetAsyncKeyState(VK_B))
+    {
+        return;
+    }
     GameFase bef1 = p1.field.getGamefase();
     GameFase bef2 = p2.field.getGamefase();
     p1.field.update(p2.field, getKeyOperation(p1.status));
@@ -73,7 +77,7 @@ void Game::onFase(GameFase bf, GameFase gf, Player& player, int chain) {
             replay_file_name += battle_history.player_1p_name + "_vs_" + battle_history.player_2p_name + "_" + timeStamp() + ".puyofu";
             battle_history.save("replay/" + replay_file_name);
         }
-        
+
         main_window->gameOver();
         replay_mode = false;
     }
@@ -114,13 +118,13 @@ void Game::onFase(GameFase bf, GameFase gf, Player& player, int chain) {
 
     // 連鎖ボイス再生
     else if (gf == CHAIN_VOICE) {
-        if (chain >= 11) {            
+        if (chain >= 11) {
             main_window->playVoice(player.status & PLAYER1 ? 0 : 1, 10);
-            player.frame++;            
+            player.frame++;
         }
-        else {        
+        else {
             main_window->playVoice(player.status & PLAYER1 ? 0 : 1, chain - 1);
-        }        
+        }
     }
 
     // 連鎖ボイスの10と1~9を組み合わせて「11」「19」を言う
@@ -207,9 +211,9 @@ void Game::show() {
     RECT rect_p2_score = { 778, 633, 930, 663 };
     RECT rect_p1_chain = { 373, 294, 408, 400 };
     RECT rect_p2_chain = { 568, 294, 602, 400 };
-    RECT rect_p1_win   = { 358, 474, 403, 510 };
-    RECT rect_p2_win   = { 584, 474, 624, 510 };
-    RECT rect_elapsed  = { 430, 410, 584, 440 };
+    RECT rect_p1_win = { 358, 474, 403, 510 };
+    RECT rect_p2_win = { 584, 474, 624, 510 };
+    RECT rect_elapsed = { 430, 410, 584, 440 };
     TCHAR score1[128], score2[128], rensa1[24], rensa2[24], time[24], p1_win[12], p2_win[12];
     TimePoint elapsed = now() - start_time;
     if (p1.max_chain < p1.field.getChain()) {
@@ -219,7 +223,7 @@ void Game::show() {
         p2.max_chain = p2.field.getChain();
     }
     wsprintf(score1, "%d", p1.field.getScoreSum());
-    wsprintf(score2, "%d", p2.field.getScoreSum());                           
+    wsprintf(score2, "%d", p2.field.getScoreSum());
     wsprintf(rensa1, "chain\n %d\nmax\n %d", p1.field.getChain(), p1.max_chain);
     wsprintf(rensa2, "chain\n %d\nmax\n %d", p2.field.getChain(), p2.max_chain);
     wsprintf(time, "GameTime:%6ds", (int)(elapsed / 1000));
@@ -231,7 +235,7 @@ void Game::show() {
     main_window->drawString(&rect_p2_score, score2, DT_RIGHT);
     main_window->drawString(&rect_p1_chain, rensa1, false);
     main_window->drawString(&rect_p2_chain, rensa2, false);
-    main_window->drawString(&rect_elapsed,  time,   false);
-    main_window->drawString(&rect_p1_win,   p1_win, false);
-    main_window->drawString(&rect_p2_win,   p2_win, false);
+    main_window->drawString(&rect_elapsed, time, false);
+    main_window->drawString(&rect_p1_win, p1_win, false);
+    main_window->drawString(&rect_p2_win, p2_win, false);
 }

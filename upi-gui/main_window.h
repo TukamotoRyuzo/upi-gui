@@ -43,7 +43,7 @@ enum FieldSize {
 // メインのウィンドウ
 class MainWindow : public WindowBase {
 public:
-    MainWindow(HINSTANCE hInst);    
+    MainWindow(HINSTANCE hInst);
     HDC dcHandle(BitmapID bid) const;
     void show(BitmapID bid) const;
     void playVoice(int i, int j) const;
@@ -69,7 +69,7 @@ protected:
         BitmapMDC() {};
         BitmapMDC(LPSTR c) : bitmap_name(c) {};
     };
-    
+
     std::unordered_map<BitmapID, BitmapMDC> mdc;
 
     Sound ren_voice[2][11];

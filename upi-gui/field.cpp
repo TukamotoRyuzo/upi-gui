@@ -7,12 +7,12 @@
 #include "move.h"
 
 // field上にpuyoをセットする
-void Field::set(const Tumo &p) {
-    field[p.x][p.y] = p.color[0]; 
-    field[p.cx()][p.cy()] = p.color[1]; 
+void Field::set(const Tumo& p) {
+    field[p.x][p.y] = p.color[0];
+    field[p.cx()][p.cy()] = p.color[1];
 }
 
-bool Field::isEmpty(const Tumo &p) const {
+bool Field::isEmpty(const Tumo& p) const {
     return isEmpty(p.x, p.y) && isEmpty(p.cx(), p.cy());
 }
 
@@ -50,7 +50,7 @@ std::string Field::toPfen() const {
 
 void Field::init() {
     this->all_clear = false;
-    this->chain = 0;    
+    this->chain = 0;
     this->fase = GameFase::START;
     this->Dcnt = 0;
     this->Lcnt = 0;
@@ -64,7 +64,7 @@ void Field::init() {
     this->operation_timer = 0;
     this->score = 0;
     this->scoresum = 0;
-    this->wait_timer = 0;    
+    this->wait_timer = 0;
     this->ojama_rand_count = 0;
 
     for (int x = 0; x < FIELD_WIDTH; x++) {
@@ -427,7 +427,7 @@ void Field::update(Field& enemy, OperationBit key_operation) {
         break;
 
         // ツモ出現待ち状態
-    case NEXT:        
+    case NEXT:
         fase = OPERATION;
         break;
 
@@ -494,7 +494,7 @@ void Field::update(Field& enemy, OperationBit key_operation) {
                 enemy.ojama[0] += enemy.ojama[1];
                 enemy.ojama[1] = 0;
             }
-                
+
             fase = OJAMA_WAIT;
         }
 
@@ -527,7 +527,7 @@ void Field::update(Field& enemy, OperationBit key_operation) {
                 for (int x = 1; x <= 6; x++) {
                     field[x][14] = EMPTY;
                 }
-                
+
                 fase = START;
             }
         }
@@ -542,7 +542,7 @@ void Field::update(Field& enemy, OperationBit key_operation) {
 
 int Field::convertSimulatorFormat(int score) {
     // 面白そうな連鎖ならぷよシミュレータで読み込める形のURLを生成する
-    FILE *fp;
+    FILE* fp;
     errno_t error;
     if ((error = fopen_s(&fp, "rensa.txt", "a+")) != 0) {
         return 0;

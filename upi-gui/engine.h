@@ -24,9 +24,9 @@ public:
     void deleteEngine(int index);
     const std::vector<EngineInfo>& getUPIEngineList() const {
         return engine_list;
-    }    
+    }
 private:
     void writeEngineToCSV();
-    const std::string engine_list_file = "engine_list.csv";    
+    const std::string engine_list_file = "engine_list.csv";
     std::vector<EngineInfo> engine_list;
 };

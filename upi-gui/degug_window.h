@@ -13,5 +13,5 @@ protected:
     bool onCreate() override;
     void setHandler() override;
     HWND parent_window_handle;
-    PipeManager *pipe1, *pipe2;
+    PipeManager* pipe1, * pipe2;
 };

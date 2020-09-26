@@ -3,7 +3,7 @@
 
 class Sound {
     IGraphBuilder* Sound::graph_builder;
-    IMediaControl* media_control; 
+    IMediaControl* media_control;
     IMediaPosition* media_position;
 public:
     Sound();

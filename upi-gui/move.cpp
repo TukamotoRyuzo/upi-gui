@@ -379,11 +379,11 @@ void OperationQueue::moveToOperationSoft(Move m, const Field& f) {
 
     // âEà⁄ìÆ
     if (necX > 0) {
-        if (necR == 3) {            
+        if (necR == 3) {
             queue[0] |= OPE_L_ROTATE;
         }
 
-        else if (necR == 2) {            
+        else if (necR == 2) {
             if (necX == 3) {
                 if (necY == 0) {
                     queue[4] |= OPE_L_ROTATE;
@@ -406,13 +406,13 @@ void OperationQueue::moveToOperationSoft(Move m, const Field& f) {
     }
 
     // ç∂à⁄ìÆ
-    else if (necX < 0) {        
+    else if (necX < 0) {
         if (necR == 3) {
             queue[0] |= OPE_L_ROTATE;
         }
 
         // ç∂à⁄ìÆéûÇÕç∂âÒì]ÇÃÇŸÇ§Ç™à¿ëS
-        else if (necR == 2) {            
+        else if (necR == 2) {
             if (necX == -2) {
                 queue[0] |= OPE_R_ROTATE;
                 queue[2] |= OPE_R_ROTATE;
@@ -442,7 +442,7 @@ void OperationQueue::moveToOperationSoft(Move m, const Field& f) {
 
             else if (!f.isEmpty(4, 12) && f.isEmpty(2, 12)) {
                 queue[0] |= OPE_L_ROTATE;
-                queue[2] |= OPE_L_ROTATE;               
+                queue[2] |= OPE_L_ROTATE;
             }
             else if (!f.isEmpty(2, 12) && f.isEmpty(4, 12)) {
                 queue[0] |= OPE_R_ROTATE;

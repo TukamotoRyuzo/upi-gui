@@ -101,7 +101,7 @@ bool MainWindow::onCreate() {
     game.show();
     initEngineList();
 
-    
+
     // 前回の入力状態を再現する
     Rule& r = game.rule;
 
@@ -145,7 +145,7 @@ bool MainWindow::initSound() {
     for (int p = 0; p < 2; p++) {
         for (int i = 0; i < 11; i++) {
             std::wostringstream wss;
-            wss << L"./voice/" << p + 1 << L"p/ren" << i + 1 << L".mp3";           
+            wss << L"./voice/" << p + 1 << L"p/ren" << i + 1 << L".mp3";
             if (!ren_voice[p][i].load((BSTR)wss.str().c_str())) {
                 return false;
             }
@@ -162,7 +162,7 @@ bool MainWindow::initDC() {
     for (BitmapID i = MEMORY; i < BITMAP_NB; i = BitmapID(i + 1)) {
         mdc[i].handle = CreateCompatibleDC(hdc);
         HBITMAP hb = i == MEMORY ? CreateCompatibleBitmap(hdc, WIN_WIDTH, WIN_HEIGHT)
-                                 : (HBITMAP)LoadBitmap(instance_handle, mdc[i].bitmap_name);
+            : (HBITMAP)LoadBitmap(instance_handle, mdc[i].bitmap_name);
         if (hb == NULL) {
             return false;
         }
@@ -241,7 +241,7 @@ void MainWindow::onDestroy() {
     if (index != -1) {
         SendMessage(child_window[COMBO_AI1P].handle, CB_GETLBTEXT, index, (LPARAM)buf);
         game.rule.engine_name_1p = std::string(buf);
-    }    
+    }
     index = SendMessage(child_window[COMBO_AI2P].handle, CB_GETCURSEL, 0, 0);
     if (index != -1) {
         SendMessage(child_window[COMBO_AI2P].handle, CB_GETLBTEXT, index, (LPARAM)buf);
@@ -431,7 +431,7 @@ void MainWindow::setHandler() {
             }
         }
     };
-    
+
     commandHandler(MENU_ADD_ENGINE) = [&](HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         ManageEngineWindow mew(instance_handle, &engine_manager);
 
@@ -541,7 +541,7 @@ void MainWindow::drawString(RECT* rect, TCHAR* str, UINT format) {
 }
 
 // 指定した範囲をもとのfield画像に戻す
-void MainWindow::rectClear(RECT *rect) {
+void MainWindow::rectClear(RECT* rect) {
     BitBlt(dcHandle(MEMORY), rect->left, rect->top, rect->right - rect->left, rect->bottom - rect->top, dcHandle(FIELD), rect->left, rect->top, SRCCOPY);
     InvalidateRect(main_window_handle, rect, false);
 }

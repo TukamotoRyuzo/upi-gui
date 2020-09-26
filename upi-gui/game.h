@@ -19,7 +19,7 @@ private:
         OperationQueue operation;
         UPIManager upi;
         std::string name;
-        Player(PlayerStatus ps, Tumo* tumo, Rule* rule) 
+        Player(PlayerStatus ps, Tumo* tumo, Rule* rule)
             : max_chain(0), win(0), frame(0), field(tumo, rule), status(ps)
         {};
         void init() {
@@ -30,9 +30,9 @@ private:
     };
 
     Tumo tumos[TUMO_MAX];
-    TimePoint start_time, stop_time;    
+    TimePoint start_time, stop_time;
     MainWindow* main_window;
-    
+
 public:
     bool replay_mode;
     BattleHistory battle_history;
