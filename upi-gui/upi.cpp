@@ -102,7 +102,7 @@ void UPIManager::position(Field& self, Field& enemy) {
     int unconformed_ojama = self_clone.getConformedOjama() - enemy_clone.getConformedOjama();
 
     std::stringstream ss;
-    ss << "position " << self.toPfen() << " " << enemy.toPfen() << " " << conformed_ojama << " " << unconformed_ojama << " " << frame;
+    ss << "position " << self.toPfen() << " " << enemy_clone.toPfen() << " " << conformed_ojama << " " << unconformed_ojama << " " << frame;
     pipe.sendMessage(ss.str());
 }
 

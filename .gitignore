@@ -216,3 +216,4 @@ ModelManifest.xml
 engine_list.csv
 *.puyofu
 rule.xml
+*.bin
