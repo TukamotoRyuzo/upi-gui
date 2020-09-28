@@ -44,7 +44,7 @@ std::string Field::toPfen() const {
         ss << "/";
     }
 
-    ss << " " << tumo_number;
+    ss << " " << tumo_number << " " << (all_clear ? 1 : 0) << " " << score;
     return ss.str();
 }
 

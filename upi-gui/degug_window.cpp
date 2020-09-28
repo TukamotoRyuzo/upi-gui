@@ -17,7 +17,7 @@ DebugWindow::DebugWindow(HINSTANCE hInst, HWND hWnd, PipeManager* p1, PipeManage
     child_window[B_DELETE_LOG] = ChildWindow(TEXT("BUTTON"), TEXT("ログ消去"), style_button, 600, 310, 80, 30);
 
     // edit
-    child_window[EDIT_DEBUG_LOG] = ChildWindow(TEXT("edit"), NULL, style_edit, 0, 0, 700, 300);
+    child_window[EDIT_DEBUG_LOG] = ChildWindow(TEXT("edit"), NULL, style_edit, 0, 0, 1500, 300);
     child_window[EDIT_SEND_COMMAND] = ChildWindow(TEXT("edit"), NULL, WS_VISIBLE | WS_CHILD | WS_BORDER | ES_LEFT | ES_AUTOHSCROLL, 30, 310, 260, 30);
 }
 
@@ -42,7 +42,7 @@ bool DebugWindow::createWindow() {
     }
 
     // windowサイズ設定
-    RECT r = { 0, 0, 700, 350 };
+    RECT r = { 0, 0, 1500, 350 };
 
     // ウィンドウサイズの自動計算
     AdjustWindowRectEx(&r, WS_OVERLAPPEDWINDOW, false, 0);

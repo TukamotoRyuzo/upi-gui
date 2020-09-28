@@ -99,7 +99,18 @@ void UPIManager::position(Field& self, Field& enemy) {
 
     // ó\çêÇ’ÇÊÇéÊìæ
     int conformed_ojama = self.getConformedOjama() - enemy.getConformedOjama();
-    int unconformed_ojama = self_clone.getConformedOjama() - enemy_clone.getConformedOjama();
+    int unconformed_ojama = frame ? (self_clone.getConformedOjama() - enemy_clone.getConformedOjama())
+                                  : (self.getUnconformedOjama() - enemy.getUnconformedOjama());
+
+    if (conformed_ojama < 0 && unconformed_ojama > 0 || conformed_ojama > 0 && unconformed_ojama < 0)
+    {
+        conformed_ojama = 0;
+    }
+    else if (frame && conformed_ojama < 0 && unconformed_ojama <= 0)
+    {
+        conformed_ojama = unconformed_ojama;
+        unconformed_ojama = 0;
+    }
 
     std::stringstream ss;
     ss << "position " << self.toPfen() << " " << enemy_clone.toPfen() << " " << conformed_ojama << " " << unconformed_ojama << " " << frame;
@@ -142,6 +153,79 @@ Move UPIManager::bestmove(Field& field) {
     return upiToMove(move, field);
 }
 
+int getMoveFrame(Move m, Rule r, int chain)
+{
+    Square p = psq(m), c = csq(m);
+    int frame = 0;
+    int rotate = 0;
+
+    int tateframe = 0;
+
+    // ècà⁄ìÆ
+    if (fileOf(p) == fileOf(c))
+    {
+        if (rankOf(p) < rankOf(c))
+        {
+            rotate = 0;
+        }
+        else
+        {
+            rotate = 2;
+        }
+
+        tateframe = (12 - rankOf(p)) * r.fall_time;
+    }
+    else
+    {
+        rotate = 1;
+        tateframe = std::max(12 - rankOf(p), 12 - rankOf(c)) * r.fall_time;
+    }
+
+    if (tateframe)
+        tateframe -= 1;
+
+    // â°à⁄ìÆ
+    int yoko = abs(2 - fileOf(p));
+    int yokoframe = yoko * r.fall_time;
+
+    if (yokoframe)
+        yokoframe -= 1;
+
+    int rotateframe = 0;
+
+    // âÒì]êî
+    if (yoko < rotate)
+    {
+        rotateframe = (rotate - yoko) * r.fall_time;
+        if (!yokoframe)
+            rotateframe -= 1;
+    }
+
+    // operation
+    frame += tateframe;
+    frame += yokoframe;
+    frame += rotateframe;
+
+    // set_time
+    frame += isTigiri(m) ? r.set_time * 2 : r.set_time;
+
+    // check_slide
+    frame += r.chain_time * chain + chain;
+
+    // check_vanish
+    frame += (r.set_time + 1) * chain;
+    
+    // chain_voice
+    frame += 1 * (chain + 1);
+    
+    frame += r.next_time;
+
+    // chain
+    frame += 5;
+
+    return frame;
+}
+
 bool UPIManager::setEngineMove(Field& self, Field& enemy, OperationQueue& queue) {
     Move move = bestmove(self);
 
@@ -157,8 +241,13 @@ bool UPIManager::setEngineMove(Field& self, Field& enemy, OperationQueue& queue)
     // ç°Ç±ÇÃèÍÇ≈ÇªÇÃëÄçÏí ÇËÇ…Ç®Ç¢ÇƒÇ›ÇƒÅAÇ®ÇØÇ»Ç©Ç¡ÇΩÇÁÇ‚ÇŒÇ¢
     auto ope_clone = queue;
     auto tumo = self_clone.getTumo();
-
-    while (self_clone.getGamefase() != CHECK_VANISH) {
+    int frame = 0;
+    int preexpected = getMoveFrame(move, *self.getRule(), 0);
+    int frames[GAMEOVER + 1] = { 0 };
+    GameFase fase;
+    while ((fase = self_clone.getGamefase()) != CHECK_VANISH) {
+        frames[fase]++;
+        frame++;
         self_clone.update(enemy_clone, ope_clone.size() ? ope_clone.pop() : NO_OPERATION);
     }
 
@@ -172,6 +261,36 @@ bool UPIManager::setEngineMove(Field& self, Field& enemy, OperationQueue& queue)
             << fileOf(csq(move)) << " " << rankOf(csq(move)) << std::endl;
         Log::write(ss.str());
     }
+
+    int chainmax = 0;
+    while ((fase = self_clone.getGamefase()) != OPERATION
+        && fase != GAMEOVER) {
+        frames[fase]++;
+        frame++;
+        self_clone.update(enemy_clone, NO_OPERATION);
+        chainmax = std::max(self_clone.getChain(), chainmax);
+    }
+    std::stringstream ss;
+    int expected = getMoveFrame(move, *self.getRule(), chainmax);
+
+    if (expected != frame)
+    {
+        OperationQueue oq;
+        oq.moveToOperationSoft(move, self);
+        ss << "expected frame = " << expected << " actual frame = " << frame << std::endl;
+    }
+    expected = getMoveFrame(move, *self.getRule(), chainmax);
+    
+    Field self_clone2(self);
+    auto ope_clone2 = queue;
+    int ff = 0;
+    while ((fase = self_clone2.getGamefase()) != CHECK_VANISH) {
+        ff++;
+        self_clone2.update(enemy_clone, ope_clone2.size() ? ope_clone2.pop() : NO_OPERATION);
+    }
+
+
+    Log::write(ss.str());
 #endif
 
     return true;
