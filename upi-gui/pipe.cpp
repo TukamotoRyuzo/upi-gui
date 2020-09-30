@@ -1,6 +1,7 @@
 #include "pipe.h"
 #include <iostream>
 #include "common.h"
+#include <filesystem>
 
 PipeManager::~PipeManager() {
     closeProcess();
@@ -66,7 +67,10 @@ int PipeManager::executeProcess(std::string engine_name) {
             throw std::string("GetStdHandle(STD_ERROR_HANDLE)");
         }
 
-        if (!CreateProcess(0, (LPSTR)engine_name.c_str(), 0, 0, TRUE, CREATE_NO_WINDOW, 0, 0, &si, &pi)) {
+        // エンジンのおいてあるディレクトリのパスを取得
+        std::string parent_path = std::filesystem::path(process_path).parent_path().string();
+
+        if (!CreateProcess(0, (LPSTR)engine_name.c_str(), 0, 0, TRUE, CREATE_NO_WINDOW, 0, parent_path.c_str(), &si, &pi)) {
             throw std::string("Failed to CreateProcess");
         }
 
